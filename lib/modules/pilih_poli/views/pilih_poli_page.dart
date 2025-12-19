@@ -8,6 +8,7 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../widgets/shared/navbar.dart';
 import '../../../widgets/shared/custom_button.dart';
 import '../../../widgets/shared/responsive_layout.dart';
+import '../../../core/constants/app_assets.dart';
 import '../controllers/pilih_poli_controller.dart';
 
 class PilihPoliPage extends GetView<PilihPoliController> {
@@ -133,20 +134,15 @@ class PilihPoliPage extends GetView<PilihPoliController> {
     );
   }
 
-  // Header section dengan icon dan subtitle
+  // Header section dengan logo dan subtitle
   Widget _buildHeaderSection(bool isMobile) {
+    final logoSize = isMobile ? 70.0 : 90.0;
+    
     return Column(
       children: [
-        // Icon container dengan gradient
+        // Logo dari asset dengan shadow
         Container(
-          width: isMobile ? 70 : 90,
-          height: isMobile ? 70 : 90,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.primaryGreen, AppColors.accentGreen],
-            ),
             borderRadius: BorderRadius.circular(isMobile ? 20 : 25),
             boxShadow: [
               BoxShadow(
@@ -156,10 +152,31 @@ class PilihPoliPage extends GetView<PilihPoliController> {
               ),
             ],
           ),
-          child: Icon(
-            Icons.local_hospital_rounded,
-            color: AppColors.white,
-            size: isMobile ? 36 : 46,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(isMobile ? 20 : 25),
+            child: Image.asset(
+              AppAssets.logo,
+              width: logoSize,
+              height: logoSize,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: logoSize,
+                height: logoSize,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.primaryGreen, AppColors.accentGreen],
+                  ),
+                  borderRadius: BorderRadius.circular(isMobile ? 20 : 25),
+                ),
+                child: Icon(
+                  Icons.local_hospital_rounded,
+                  color: AppColors.white,
+                  size: isMobile ? 36 : 46,
+                ),
+              ),
+            ),
           ),
         ),
         SizedBox(height: isMobile ? AppSizes.paddingM : AppSizes.paddingL),

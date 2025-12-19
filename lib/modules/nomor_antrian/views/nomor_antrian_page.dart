@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../../widgets/shared/wave_decoration.dart';
 import '../../../widgets/shared/custom_card.dart';
 import '../../../widgets/shared/custom_button.dart';
@@ -132,19 +133,31 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
 
   // Header dengan logo dan title
   Widget _buildHeader(bool isMobile) {
+    final logoSize = isMobile ? 60.0 : 80.0;
+    
     return Column(
       children: [
-        Container(
-          width: isMobile ? 50 : 60,
-          height: isMobile ? 50 : 60,
-          decoration: BoxDecoration(
-            color: AppColors.primaryGreen,
-            borderRadius: BorderRadius.circular(AppSizes.radiusM),
-          ),
-          child: Icon(
-            Icons.local_hospital,
-            color: AppColors.white,
-            size: isMobile ? 28 : 32,
+        // Logo dari asset
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppSizes.radiusL),
+          child: Image.asset(
+            AppAssets.logo,
+            width: logoSize,
+            height: logoSize,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: logoSize,
+              height: logoSize,
+              decoration: BoxDecoration(
+                color: AppColors.primaryGreen,
+                borderRadius: BorderRadius.circular(AppSizes.radiusL),
+              ),
+              child: Icon(
+                Icons.local_hospital,
+                color: AppColors.white,
+                size: isMobile ? 32 : 40,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: AppSizes.paddingM),
