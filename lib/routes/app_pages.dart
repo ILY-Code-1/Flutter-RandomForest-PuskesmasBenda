@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
+import 'admin_pages.dart';
 import '../modules/landing/views/landing_page.dart';
 import '../modules/landing/bindings/landing_binding.dart';
 import '../modules/pilih_poli/views/pilih_poli_page.dart';
@@ -52,6 +53,8 @@ class AppPages {
       transitionDuration: const Duration(milliseconds: 500),
       curve: Curves.easeOutBack,
     ),
+    // Admin routes
+    ...AdminPages.routes,
   ];
 }
 
