@@ -6,4 +6,5 @@ class AppRoutes {
   static const String pilihPoli = '/pilih-poli';
   static const String isiForm = '/isi-form';
   static const String nomorAntrian = '/nomor-antrian';
+  static const String displayAntrian = '/call/nomor-antrian';
 }

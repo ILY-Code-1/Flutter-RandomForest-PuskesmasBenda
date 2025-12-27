@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(lib\\modules\\display_antrian\\bindings/**)",
+      "Edit(lib\\modules\\display_antrian\\widgets/**)",
+      "Edit(**)"
+    ]
+  }
+}

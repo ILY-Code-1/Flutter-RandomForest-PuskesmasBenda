@@ -88,7 +88,7 @@ class DashboardPage extends GetView<DashboardController> {
                 ),
                 const SizedBox(height: 8),
                 Obx(() => Text(
-                      'Tanggal: ${controller.currentDate.value}',
+                      'Tanggal: ${controller.currentDate}',
                       style: TextStyle(
                         fontSize: 16,
                         color: AppColors.white.withValues(alpha: 0.9),

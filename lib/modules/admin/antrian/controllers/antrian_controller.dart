@@ -1,97 +1,155 @@
 /// Controller untuk halaman Antrian Admin
 /// Mengelola state daftar antrian dengan status flow
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../../../../models/queue_model.dart';
+import '../../../../services/queue_service.dart';
+import '../../../../core/constants/poli_constants.dart';
 
 class AntrianController extends GetxController {
   // Status flow: Menunggu -> Dilayani -> Selesai
   static const List<String> statusFlow = ['Menunggu', 'Dilayani', 'Selesai'];
 
-  // Tanggal hari ini
-  final currentDate = '22-12-2025'.obs;
+  // Tanggal yang dipilih
+  final selectedDate = DateTime.now().obs;
 
-  // Dummy data antrian dengan status berbeda
-  final antrianList = <Map<String, dynamic>>[].obs;
+  // Poli yang dipilih
+  final selectedPoli = Rxn<String>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadAntrianData();
+  // Data antrian
+  final antrianList = <QueueModel>[].obs;
+
+  // Loading state
+  final isLoading = false.obs;
+
+  // Format tanggal untuk display
+  String get currentDate => DateFormat('dd-MM-yyyy').format(selectedDate.value);
+
+  // List poli
+  List<Map<String, dynamic>> get poliList => PoliConstants.poliList;
+
+  /// Pilih poli dan load antrian
+  Future<void> selectPoli(String kodePoli) async {
+    selectedPoli.value = kodePoli;
+    await loadAntrianData();
   }
 
-  // Load dummy data antrian
-  void loadAntrianData() {
-    antrianList.value = [
-      {
-        'nomor': 'PU01',
-        'nama': 'Ahmad Suryadi',
-        'estimasi': '10:00 WIB',
-        'status': 'Menunggu',
-        'poli': 'UMUM',
-        'waktuDaftar': 'Senin, 22 Desember 2025',
-        'rataLayanan': '10 Menit',
-        'nomorUrut': '01',
-        'estimasiTunggu': '15 Menit',
-        'perkiraanDipanggil': '10:00:00 WIB',
-      },
-      {
-        'nomor': 'PG02',
-        'nama': 'Siti Rahayu',
-        'estimasi': '10:15 WIB',
-        'status': 'Dilayani',
-        'poli': 'GIGI',
-        'waktuDaftar': 'Senin, 22 Desember 2025',
-        'rataLayanan': '15 Menit',
-        'nomorUrut': '02',
-        'estimasiTunggu': '20 Menit',
-        'perkiraanDipanggil': '10:15:00 WIB',
-      },
-      {
-        'nomor': 'PK03',
-        'nama': 'Dewi Lestari',
-        'estimasi': '10:30 WIB',
-        'status': 'Selesai',
-        'poli': 'KIA',
-        'waktuDaftar': 'Senin, 22 Desember 2025',
-        'rataLayanan': '12 Menit',
-        'nomorUrut': '03',
-        'estimasiTunggu': '25 Menit',
-        'perkiraanDipanggil': '10:30:00 WIB',
-      },
-      {
-        'nomor': 'PU04',
-        'nama': 'Budi Santoso',
-        'estimasi': '10:45 WIB',
-        'status': 'Menunggu',
-        'poli': 'UMUM',
-        'waktuDaftar': 'Senin, 22 Desember 2025',
-        'rataLayanan': '10 Menit',
-        'nomorUrut': '04',
-        'estimasiTunggu': '30 Menit',
-        'perkiraanDipanggil': '10:45:00 WIB',
-      },
-      {
-        'nomor': 'PG05',
-        'nama': 'Rina Wati',
-        'estimasi': '11:00 WIB',
-        'status': 'Menunggu',
-        'poli': 'GIGI',
-        'waktuDaftar': 'Senin, 22 Desember 2025',
-        'rataLayanan': '15 Menit',
-        'nomorUrut': '05',
-        'estimasiTunggu': '35 Menit',
-        'perkiraanDipanggil': '11:00:00 WIB',
-      },
-    ];
-  }
-
-  // Update status ke tahap berikutnya
-  void updateStatus(int index) {
-    final currentStatus = antrianList[index]['status'] as String;
-    final currentIndex = statusFlow.indexOf(currentStatus);
+  /// Load data antrian berdasarkan tanggal dan poli
+  Future<void> loadAntrianData() async {
+    if (selectedPoli.value == null) return;
     
-    if (currentIndex < statusFlow.length - 1) {
-      antrianList[index]['status'] = statusFlow[currentIndex + 1];
-      antrianList.refresh();
+    isLoading.value = true;
+    try {
+      antrianList.value = await QueueService.getAntrianByDateAndPoli(
+        selectedDate.value,
+        selectedPoli.value!,
+      );
+    } catch (e) {
+      debugPrint('Error loading antrian: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Pilih tanggal filter
+  Future<void> selectDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate.value,
+      firstDate: DateTime(2024),
+      lastDate: DateTime.now(),
+    );
+    
+    if (picked != null) {
+      selectedDate.value = picked;
+      await loadAntrianData();
+    }
+  }
+
+  /// Update status ke Dilayani
+  Future<void> updateToDilayani(QueueModel queue) async {
+    if (queue.id == null) return;
+    
+    try {
+      await QueueService.updateStatusDilayani(queue.id!);
+      await loadAntrianData();
+      Get.snackbar(
+        'Sukses',
+        'Status antrian ${queue.nomorAntrian} diubah ke Dilayani',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal mengubah status: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Update status ke Selesai
+  Future<void> updateToSelesai(QueueModel queue) async {
+    if (queue.id == null) return;
+    
+    try {
+      await QueueService.updateStatusSelesai(queue.id!);
+      await loadAntrianData();
+      Get.snackbar(
+        'Sukses',
+        'Status antrian ${queue.nomorAntrian} diubah ke Selesai',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal mengubah status: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  /// Update status berdasarkan index
+  Future<void> updateStatus(int index) async {
+    final queue = antrianList[index];
+    
+    if (queue.statusAntrian == 'Menunggu') {
+      await updateToDilayani(queue);
+    } else if (queue.statusAntrian == 'Dilayani') {
+      await updateToSelesai(queue);
+    }
+  }
+
+  /// Panggil antrian (untuk display TV via Firebase realtime)
+  Future<void> callAntrian(QueueModel queue) async {
+    try {
+      // Broadcast ke Firebase untuk display TV di browser lain
+      await QueueService.broadcastCallQueue(queue);
+      
+      Get.snackbar(
+        'Sukses',
+        'Memanggil antrian ${queue.nomorAntrian}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal memanggil antrian: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -104,3 +162,5 @@ class AntrianController extends GetxController {
     return null;
   }
 }
+
+

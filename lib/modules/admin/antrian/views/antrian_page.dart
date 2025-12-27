@@ -1,10 +1,12 @@
 /// Halaman Daftar Antrian Admin
-/// Menampilkan tabel daftar antrian dengan aksi view detail dan update status
+/// Menampilkan pilihan poli dan tabel daftar antrian dengan aksi
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../routes/admin_routes.dart';
 import '../../../../widgets/admin/admin_layout.dart';
+import '../../../../models/queue_model.dart';
 import '../controllers/antrian_controller.dart';
 
 class AntrianPage extends GetView<AntrianController> {
@@ -15,61 +17,172 @@ class AntrianPage extends GetView<AntrianController> {
     return AdminLayout(
       currentRoute: AdminRoutes.antrian,
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header dengan judul dan tanggal
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Daftar Antrian',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryGreen,
-                  ),
-                ),
-                Obx(() => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColors.primaryGreen),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.calendar_today,
-                            size: 18,
-                            color: AppColors.primaryGreen,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            controller.currentDate.value,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryGreen,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
-              ],
+        child: Obx(() {
+          // Jika belum pilih poli, tampilkan pilihan poli
+          if (controller.selectedPoli.value == null) {
+            return _buildPoliSelection();
+          }
+          // Jika sudah pilih poli, tampilkan tabel antrian
+          return _buildAntrianList(context);
+        }),
+      ),
+    );
+  }
+
+  /// Build pilihan poli
+  Widget _buildPoliSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Pilih Poli',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primaryGreen,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Pilih poli untuk melihat daftar antrian',
+          style: TextStyle(
+            fontSize: 16,
+            color: AppColors.grey,
+          ),
+        ),
+        const SizedBox(height: 32),
+        
+        // Poli cards
+        Row(
+          children: controller.poliList.map((poli) {
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: _buildPoliCard(poli),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPoliCard(Map<String, dynamic> poli) {
+    return InkWell(
+      onTap: () => controller.selectPoli(poli['code']),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadowColor,
+              blurRadius: 8,
+              offset: Offset(0, 4),
             ),
-            const SizedBox(height: 24),
-            // Tabel Antrian
-            _buildAntrianTable(),
-            const SizedBox(height: 32),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.primaryGreen.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                _getPoliIcon(poli['code']),
+                size: 40,
+                color: AppColors.primaryGreen,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              poli['name'],
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  /// Build daftar antrian
+  Widget _buildAntrianList(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header dengan back, judul, dan filter tanggal
+        Row(
+          children: [
+            // Back button
+            IconButton(
+              onPressed: () {
+                controller.selectedPoli.value = null;
+                controller.antrianList.clear();
+              },
+              icon: const Icon(Icons.arrow_back),
+              color: AppColors.primaryGreen,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Antrian ${_getPoliName(controller.selectedPoli.value!)}',
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryGreen,
+                ),
+              ),
+            ),
+            // Date picker
+            InkWell(
+              onTap: () => controller.selectDate(context),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.primaryGreen),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 18,
+                      color: AppColors.primaryGreen,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      controller.currentDate,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        
+        // Table
+        _buildAntrianTable(),
+        const SizedBox(height: 32),
+      ],
     );
   }
 
@@ -89,6 +202,25 @@ class AntrianPage extends GetView<AntrianController> {
       ),
       clipBehavior: Clip.antiAlias,
       child: Obx(() {
+        if (controller.isLoading.value) {
+          return const Padding(
+            padding: EdgeInsets.all(48),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        
+        if (controller.antrianList.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(48),
+            child: Center(
+              child: Text(
+                'Tidak ada antrian',
+                style: TextStyle(color: AppColors.grey, fontSize: 16),
+              ),
+            ),
+          );
+        }
+
         return Column(
           children: [
             // Table header
@@ -101,9 +233,9 @@ class AntrianPage extends GetView<AntrianController> {
                 children: [
                   Expanded(flex: 2, child: _HeaderCell(text: 'No. Antrian')),
                   Expanded(flex: 3, child: _HeaderCell(text: 'Nama Pasien')),
-                  Expanded(flex: 2, child: _HeaderCell(text: 'Poli')),
                   Expanded(flex: 2, child: _HeaderCell(text: 'Estimasi')),
                   Expanded(flex: 2, child: _HeaderCell(text: 'Status')),
+                  Expanded(flex: 1, child: _HeaderCell(text: 'Call')),
                   Expanded(flex: 2, child: _HeaderCell(text: 'Aksi')),
                 ],
               ),
@@ -120,8 +252,8 @@ class AntrianPage extends GetView<AntrianController> {
     );
   }
 
-  Widget _buildTableRow(Map<String, dynamic> item, int index) {
-    final status = item['status'] as String;
+  Widget _buildTableRow(QueueModel item, int index) {
+    final status = item.statusAntrian;
     final isEven = index % 2 == 0;
 
     return Container(
@@ -140,7 +272,7 @@ class AntrianPage extends GetView<AntrianController> {
           Expanded(
             flex: 2,
             child: Text(
-              item['nomor'] ?? '',
+              item.nomorAntrian,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.primaryGreen,
@@ -152,7 +284,7 @@ class AntrianPage extends GetView<AntrianController> {
           Expanded(
             flex: 3,
             child: Text(
-              item['nama'] ?? '',
+              item.namaPasien,
               style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
@@ -160,22 +292,11 @@ class AntrianPage extends GetView<AntrianController> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          // Poli
-          Expanded(
-            flex: 2,
-            child: Text(
-              item['poli'] ?? '',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
-            ),
-          ),
           // Estimasi
           Expanded(
             flex: 2,
             child: Text(
-              item['estimasi'] ?? '',
+              '${DateFormat('HH:mm').format(item.jamEfektifPelayanan)} WIB',
               style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
@@ -186,6 +307,20 @@ class AntrianPage extends GetView<AntrianController> {
           Expanded(
             flex: 2,
             child: _buildStatusBadge(status),
+          ),
+          // Call button
+          Expanded(
+            flex: 1,
+            child: status == 'Menunggu'
+                ? IconButton(
+                    onPressed: () => controller.callAntrian(item),
+                    icon: const Icon(Icons.campaign, size: 20),
+                    color: Colors.orange,
+                    tooltip: 'Panggil Antrian',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  )
+                : const SizedBox.shrink(),
           ),
           // Aksi
           Expanded(
@@ -198,9 +333,7 @@ class AntrianPage extends GetView<AntrianController> {
                   onPressed: () {
                     Get.toNamed(
                       AdminRoutes.detailAntrian,
-                      arguments: Map<String, String>.from(
-                        item.map((k, v) => MapEntry(k, v.toString())),
-                      ),
+                      arguments: item,
                     );
                   },
                   icon: const Icon(Icons.visibility, size: 18),
@@ -259,6 +392,32 @@ class AntrianPage extends GetView<AntrianController> {
         return AppColors.primaryGreen;
       default:
         return AppColors.grey;
+    }
+  }
+
+  IconData _getPoliIcon(String code) {
+    switch (code) {
+      case 'PU':
+        return Icons.medical_services_rounded;
+      case 'PG':
+        return Icons.sentiment_satisfied_alt_rounded;
+      case 'PK':
+        return Icons.pregnant_woman_rounded;
+      default:
+        return Icons.local_hospital_rounded;
+    }
+  }
+
+  String _getPoliName(String code) {
+    switch (code) {
+      case 'PU':
+        return 'Poli Umum';
+      case 'PG':
+        return 'Poli Gigi';
+      case 'PK':
+        return 'Poli KIA';
+      default:
+        return 'Poli';
     }
   }
 }

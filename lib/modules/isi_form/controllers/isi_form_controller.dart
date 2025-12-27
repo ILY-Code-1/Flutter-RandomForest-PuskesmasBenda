@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../routes/app_routes.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../services/queue_service.dart';
 
 class IsiFormController extends GetxController {
   /// Form key untuk validasi
@@ -18,8 +19,8 @@ class IsiFormController extends GetxController {
   /// Data poli yang dipilih (dari arguments)
   Map<String, dynamic>? selectedPoli;
 
-  /// Counter untuk nomor antrian
-  static int _queueCounter = 0;
+  /// Loading state
+  final isLoading = false.obs;
 
   /// List jenis kelamin
   final List<String> jenisKelaminList = [
@@ -30,7 +31,6 @@ class IsiFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Ambil arguments dari halaman sebelumnya
     selectedPoli = Get.arguments as Map<String, dynamic>?;
   }
 
@@ -46,15 +46,8 @@ class IsiFormController extends GetxController {
     selectedJenisKelamin.value = value;
   }
 
-  /// Generate nomor antrian
-  String _generateQueueNumber() {
-    _queueCounter++;
-    final code = selectedPoli?['code'] ?? 'PU';
-    return '$code-${_queueCounter.toString().padLeft(2, '0')}';
-  }
-
-  /// Submit form
-  void submitForm() {
+  /// Submit form dan generate antrian
+  Future<void> submitForm() async {
     if (formKey.currentState?.validate() ?? false) {
       if (selectedJenisKelamin.value == null) {
         Get.snackbar(
@@ -65,18 +58,32 @@ class IsiFormController extends GetxController {
         return;
       }
 
-      // Generate data antrian
-      final queueData = {
-        'queueNumber': _generateQueueNumber(),
-        'nama': namaController.text,
-        'jenisKelamin': selectedJenisKelamin.value,
-        'usia': usiaController.text,
-        'poli': selectedPoli?['name'] ?? 'Poli Umum',
-        'estimasi': '00:15:00',
-      };
+      isLoading.value = true;
 
-      // Navigasi ke halaman nomor antrian
-      Get.toNamed(AppRoutes.nomorAntrian, arguments: queueData);
+      try {
+        // Buat antrian di Firebase dengan prediksi
+        final queue = await QueueService.createQueue(
+          namaPasien: namaController.text.trim(),
+          jenisKelamin: selectedJenisKelamin.value!,
+          usia: int.parse(usiaController.text),
+          poli: selectedPoli?['name'] ?? 'Poli Umum',
+          kodePoli: selectedPoli?['code'] ?? 'PU',
+        );
+
+        isLoading.value = false;
+
+        // Navigasi ke halaman nomor antrian dengan data queue
+        Get.toNamed(AppRoutes.nomorAntrian, arguments: queue);
+      } catch (e) {
+        isLoading.value = false;
+        Get.snackbar(
+          'Error',
+          'Gagal membuat antrian: $e',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     }
   }
 

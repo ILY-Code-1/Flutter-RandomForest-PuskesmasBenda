@@ -1,0 +1,58 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "antrian",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "kodePoli", "order": "ASCENDING" },
+        { "fieldPath": "hari", "order": "ASCENDING" },
+        { "fieldPath": "waktuDaftar", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "antrian",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "kodePoli", "order": "ASCENDING" },
+        { "fieldPath": "hari", "order": "ASCENDING" },
+        { "fieldPath": "waktuDaftar", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "antrian",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "hari", "order": "ASCENDING" },
+        { "fieldPath": "waktuDaftar", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "antrian",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "hari", "order": "ASCENDING" },
+        { "fieldPath": "statusAntrian", "order": "ASCENDING" },
+        { "fieldPath": "waktuDaftar", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "antrian",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "kodePoli", "order": "ASCENDING" },
+        { "fieldPath": "hari", "order": "ASCENDING" },
+        { "fieldPath": "statusAntrian", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "antrian",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "statusAntrian", "order": "ASCENDING" },
+        { "fieldPath": "waktuTungguAktual", "order": "ASCENDING" },
+        { "fieldPath": "waktuDaftar", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

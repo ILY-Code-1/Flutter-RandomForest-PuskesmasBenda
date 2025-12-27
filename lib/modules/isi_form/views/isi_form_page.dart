@@ -92,12 +92,14 @@ class IsiFormPage extends GetView<IsiFormController> {
                   SizedBox(height: isMobile ? AppSizes.paddingL : AppSizes.paddingXL),
 
                   // Button Ambil Antrian
-                  CustomButton(
-                    text: AppStrings.ambilAntrian,
-                    onPressed: controller.submitForm,
-                    width: isMobile ? 180 : 220,
-                    height: isMobile ? 48 : 56,
-                  ),
+                  Obx(() => controller.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : CustomButton(
+                          text: AppStrings.ambilAntrian,
+                          onPressed: controller.submitForm,
+                          width: isMobile ? 180 : 220,
+                          height: isMobile ? 48 : 56,
+                        )),
 
                   const SizedBox(height: AppSizes.paddingXXL),
                 ],

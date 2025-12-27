@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Antrian collection - allow read/write for now (development)
+    match /antrian/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

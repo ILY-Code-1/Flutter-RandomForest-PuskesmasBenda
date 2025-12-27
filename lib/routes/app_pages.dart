@@ -11,6 +11,8 @@ import '../modules/isi_form/views/isi_form_page.dart';
 import '../modules/isi_form/bindings/isi_form_binding.dart';
 import '../modules/nomor_antrian/views/nomor_antrian_page.dart';
 import '../modules/nomor_antrian/bindings/nomor_antrian_binding.dart';
+import '../modules/display_antrian/views/display_antrian_page.dart';
+import '../modules/display_antrian/bindings/display_antrian_binding.dart';
 
 class AppPages {
   AppPages._();
@@ -52,6 +54,13 @@ class AppPages {
       transition: Transition.zoom,
       transitionDuration: const Duration(milliseconds: 500),
       curve: Curves.easeOutBack,
+    ),
+    GetPage(
+      name: AppRoutes.displayAntrian,
+      page: () => const DisplayAntrianPage(),
+      binding: DisplayAntrianBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: _transitionDuration,
     ),
     // Admin routes
     ...AdminPages.routes,
