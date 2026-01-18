@@ -8,8 +8,10 @@ import '../../../../services/queue_service.dart';
 class DashboardController extends GetxController {
   // Data jumlah antrian per poli
   final poliUmumCount = 0.obs;
-  final poliGigiCount = 0.obs;
+  final poliLansiaCount = 0.obs;
+  final poliAnakCount = 0.obs;
   final poliKiaCount = 0.obs;
+  final poliGigiCount = 0.obs;
 
   // Statistik antrian
   final totalAntrianHariIni = 0.obs;
@@ -24,7 +26,8 @@ class DashboardController extends GetxController {
 
   // Get total antrian selesai
   int get totalAntrianSelesai => 
-      poliUmumCount.value + poliGigiCount.value + poliKiaCount.value;
+      poliUmumCount.value + poliLansiaCount.value + poliAnakCount.value + 
+      poliKiaCount.value + poliGigiCount.value;
 
   // Format tanggal untuk display
   String get currentDate => DateFormat('dd-MM-yyyy').format(selectedDate.value);
@@ -45,8 +48,10 @@ class DashboardController extends GetxController {
       totalMenunggu.value = ringkasan['menunggu'] ?? 0;
       totalDilayani.value = ringkasan['dilayani'] ?? 0;
       poliUmumCount.value = ringkasan['poliUmum'] ?? 0;
-      poliGigiCount.value = ringkasan['poliGigi'] ?? 0;
+      poliLansiaCount.value = ringkasan['poliLansia'] ?? 0;
+      poliAnakCount.value = ringkasan['poliAnak'] ?? 0;
       poliKiaCount.value = ringkasan['poliKia'] ?? 0;
+      poliGigiCount.value = ringkasan['poliGigi'] ?? 0;
     } catch (e) {
       debugPrint('Error loading dashboard data: $e');
     } finally {
@@ -79,8 +84,10 @@ class DashboardController extends GetxController {
       int menunggu = 0;
       int dilayani = 0;
       int poliUmum = 0;
-      int poliGigi = 0;
+      int poliLansia = 0;
+      int poliAnak = 0;
       int poliKia = 0;
+      int poliGigi = 0;
 
       for (final q in antrian) {
         switch (q.statusAntrian) {
@@ -96,11 +103,17 @@ class DashboardController extends GetxController {
           case 'PU':
             poliUmum++;
             break;
-          case 'PG':
-            poliGigi++;
+          case 'PL':
+            poliLansia++;
+            break;
+          case 'PA':
+            poliAnak++;
             break;
           case 'PK':
             poliKia++;
+            break;
+          case 'PG':
+            poliGigi++;
             break;
         }
       }
@@ -109,8 +122,10 @@ class DashboardController extends GetxController {
       totalMenunggu.value = menunggu;
       totalDilayani.value = dilayani;
       poliUmumCount.value = poliUmum;
-      poliGigiCount.value = poliGigi;
+      poliLansiaCount.value = poliLansia;
+      poliAnakCount.value = poliAnak;
       poliKiaCount.value = poliKia;
+      poliGigiCount.value = poliGigi;
     } catch (e) {
       debugPrint('Error loading data by date: $e');
     } finally {

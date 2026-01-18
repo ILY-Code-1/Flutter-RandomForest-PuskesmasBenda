@@ -360,8 +360,10 @@ class QueueService {
     int dilayani = 0;
     int selesai = 0;
     int poliUmum = 0;
-    int poliGigi = 0;
+    int poliLansia = 0;
+    int poliAnak = 0;
     int poliKia = 0;
+    int poliGigi = 0;
 
     for (final doc in querySnapshot.docs) {
       final data = doc.data();
@@ -383,11 +385,17 @@ class QueueService {
         case 'PU':
           poliUmum++;
           break;
-        case 'PG':
-          poliGigi++;
+        case 'PL':
+          poliLansia++;
+          break;
+        case 'PA':
+          poliAnak++;
           break;
         case 'PK':
           poliKia++;
+          break;
+        case 'PG':
+          poliGigi++;
           break;
       }
     }
@@ -398,8 +406,10 @@ class QueueService {
       'dilayani': dilayani,
       'selesai': selesai,
       'poliUmum': poliUmum,
-      'poliGigi': poliGigi,
+      'poliLansia': poliLansia,
+      'poliAnak': poliAnak,
       'poliKia': poliKia,
+      'poliGigi': poliGigi,
     };
   }
 

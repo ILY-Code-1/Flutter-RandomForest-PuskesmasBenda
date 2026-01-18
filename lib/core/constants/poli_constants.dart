@@ -16,15 +16,19 @@ class PoliConstants {
   // ANDA BISA MENGUBAH NILAI INI SESUAI KEBUTUHAN
   static const Map<String, int> rataRataWaktuPelayanan = {
     'PU': 10,  // Poli Umum: 10 menit per pasien
+    'PL': 12,  // Poli Lansia: 12 menit per pasien
+    'PA': 15,  // Poli Anak: 15 menit per pasien
+    'PK': 12,  // Poli KIA (Ibu Hamil & Imunisasi): 12 menit per pasien
     'PG': 15,  // Poli Gigi: 15 menit per pasien
-    'PK': 12,  // Poli KIA: 12 menit per pasien
   };
 
   // Data poli
   static const List<Map<String, dynamic>> poliList = [
     {'name': 'Poli Umum', 'code': 'PU', 'icon': 'medical_services'},
-    {'name': 'Poli Gigi', 'code': 'PG', 'icon': 'dentistry'},
+    {'name': 'Poli Lansia', 'code': 'PL', 'icon': 'elderly'},
+    {'name': 'Poli Anak', 'code': 'PA', 'icon': 'child_care'},
     {'name': 'Poli KIA', 'code': 'PK', 'icon': 'pregnant_woman'},
+    {'name': 'Poli Gigi', 'code': 'PG', 'icon': 'dentistry'},
   ];
 
   // Status antrian

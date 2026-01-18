@@ -3,14 +3,16 @@ import 'package:get/get.dart';
 import '../../../routes/app_routes.dart';
 
 class PilihPoliController extends GetxController {
-  /// Index poli yang dipilih (0: Umum, 1: Gigi, 2: KIA)
+  /// Index poli yang dipilih (0: Umum, 1: Lansia, 2: Anak, 3: KIA, 4: Gigi)
   final RxInt selectedPoliIndex = (-1).obs;
 
   /// Data poli tersedia
   final List<Map<String, dynamic>> poliList = [
     {'name': 'Poli Umum', 'code': 'PU', 'icon': 'medical_services'},
-    {'name': 'Poli Gigi', 'code': 'PG', 'icon': 'dentistry'},
+    {'name': 'Poli Lansia', 'code': 'PL', 'icon': 'elderly'},
+    {'name': 'Poli Anak', 'code': 'PA', 'icon': 'child_care'},
     {'name': 'Poli KIA', 'code': 'PK', 'icon': 'pregnant_woman'},
+    {'name': 'Poli Gigi', 'code': 'PG', 'icon': 'dentistry'},
   ];
 
   /// Pilih poli berdasarkan index

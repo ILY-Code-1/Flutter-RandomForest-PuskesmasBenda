@@ -133,12 +133,20 @@ class DashboardPage extends GetView<DashboardController> {
           count: controller.poliUmumCount.value,
         ),
         SummaryCard(
-          title: 'Poli Gigi',
-          count: controller.poliGigiCount.value,
+          title: 'Poli Lansia',
+          count: controller.poliLansiaCount.value,
+        ),
+        SummaryCard(
+          title: 'Poli Anak',
+          count: controller.poliAnakCount.value,
         ),
         SummaryCard(
           title: 'Poli KIA',
           count: controller.poliKiaCount.value,
+        ),
+        SummaryCard(
+          title: 'Poli Gigi',
+          count: controller.poliGigiCount.value,
         ),
       ];
 
