@@ -2,24 +2,24 @@
 class PoliConstants {
   PoliConstants._();
 
-  // Jam buka puskesmas (default 08:30)
-  static const String jamBukaPuskesmas = '08:30';
-  static const int jamBukaHour = 8;
+  // Jam buka puskesmas (default 07:30)
+  static const String jamBukaPuskesmas = '07:30';
+  static const int jamBukaHour = 7;
   static const int jamBukaMinute = 30;
-  
-  // Jam tutup puskesmas (default 16:00)
-  static const String jamTutupPuskesmas = '16:00';
-  static const int jamTutupHour = 16;
+
+  // Jam tutup puskesmas (default 14:00)
+  static const String jamTutupPuskesmas = '14:00';
+  static const int jamTutupHour = 14;
   static const int jamTutupMinute = 0;
 
   // Rata-rata waktu pelayanan per poli (dalam menit)
   // ANDA BISA MENGUBAH NILAI INI SESUAI KEBUTUHAN
   static const Map<String, int> rataRataWaktuPelayanan = {
-    'PU': 10,  // Poli Umum: 10 menit per pasien
-    'PL': 12,  // Poli Lansia: 12 menit per pasien
-    'PA': 15,  // Poli Anak: 15 menit per pasien
-    'PK': 12,  // Poli KIA (Ibu Hamil & Imunisasi): 12 menit per pasien
-    'PG': 15,  // Poli Gigi: 15 menit per pasien
+    'PU': 5, // Poli Umum: 5 menit per pasien
+    'PL': 3, // Poli Lansia: 3 menit per pasien
+    'PA': 5, // Poli Anak:5 menit per pasien
+    'PK': 7, // Poli KIA (Ibu Hamil & Imunisasi): 7 menit per pasien
+    'PG': 15, // Poli Gigi: 15 menit per pasien
   };
 
   // Data poli

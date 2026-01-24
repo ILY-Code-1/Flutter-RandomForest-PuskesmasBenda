@@ -13,8 +13,10 @@ import '../../../core/constants/poli_constants.dart';
 class DisplayAntrianController extends GetxController {
   // Data antrian per poli
   final antrianPoliUmum = <QueueModel>[].obs;
-  final antrianPoliGigi = <QueueModel>[].obs;
+  final antrianPoliLansia = <QueueModel>[].obs;
+  final antrianPoliAnak = <QueueModel>[].obs;
   final antrianPoliKia = <QueueModel>[].obs;
+  final antrianPoliGigi = <QueueModel>[].obs;
 
   // Realtime clock
   final currentTime = ''.obs;
@@ -73,11 +75,17 @@ class DisplayAntrianController extends GetxController {
         antrianPoliUmum.value = antrianList
             .where((q) => q.kodePoli == 'PU')
             .toList();
-        antrianPoliGigi.value = antrianList
-            .where((q) => q.kodePoli == 'PG')
+        antrianPoliLansia.value = antrianList
+            .where((q) => q.kodePoli == 'PL')
+            .toList();
+        antrianPoliAnak.value = antrianList
+            .where((q) => q.kodePoli == 'PA')
             .toList();
         antrianPoliKia.value = antrianList
             .where((q) => q.kodePoli == 'PK')
+            .toList();
+        antrianPoliGigi.value = antrianList
+            .where((q) => q.kodePoli == 'PG')
             .toList();
       },
       onError: (e) {
@@ -95,8 +103,8 @@ class DisplayAntrianController extends GetxController {
           calledQueueData.value = data;
           showCallDialog.value = true;
           
-          // Play notification sound
-          _playNotificationSound();
+          // Play bell sound
+          _playBellSound();
           
           // Auto hide after 5 seconds
           Future.delayed(const Duration(seconds: 5), () {
@@ -111,15 +119,16 @@ class DisplayAntrianController extends GetxController {
     );
   }
 
-  /// Play notification sound saat ada panggilan
-  Future<void> _playNotificationSound() async {
+  /// Play bell sound untuk panggilan antrian
+  Future<void> _playBellSound() async {
     try {
       await _audioPlayer.play(
-        UrlSource('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'),
+        AssetSource('audio/bell.mp3'),
         volume: 1.0,
       );
     } catch (e) {
-      debugPrint('Error playing sound: $e');
+      debugPrint('Error playing bell sound: $e');
+      // Fallback ke system sound jika error
       await SystemSound.play(SystemSoundType.alert);
     }
   }
@@ -132,10 +141,14 @@ class DisplayAntrianController extends GetxController {
     switch (kodePoli) {
       case 'PU':
         return antrianPoliUmum;
-      case 'PG':
-        return antrianPoliGigi;
+      case 'PL':
+        return antrianPoliLansia;
+      case 'PA':
+        return antrianPoliAnak;
       case 'PK':
         return antrianPoliKia;
+      case 'PG':
+        return antrianPoliGigi;
       default:
         return [];
     }

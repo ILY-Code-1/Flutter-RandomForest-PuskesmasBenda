@@ -22,7 +22,6 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isMobile = constraints.maxWidth < AppSizes.mobileBreakpoint;
-          final waveHeight = isMobile ? AppSizes.waveHeightMobile : AppSizes.waveHeight;
 
           return Column(
             children: [
@@ -31,87 +30,120 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? AppSizes.paddingM : AppSizes.paddingXL,
-                      vertical: AppSizes.paddingXL,
+                      horizontal: isMobile
+                          ? AppSizes.paddingS
+                          : AppSizes.paddingM,
+                      vertical: isMobile
+                          ? AppSizes.paddingS
+                          : AppSizes.paddingM,
                     ),
                     child: Center(
                       child: ContentConstraint(
                         maxWidth: AppSizes.maxCardWidth,
                         child: CustomCard(
                           padding: EdgeInsets.all(
-                            isMobile ? AppSizes.paddingL : AppSizes.paddingXL,
+                            isMobile ? AppSizes.paddingS : AppSizes.paddingM,
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // Header dengan logo dan title
                               _buildHeader(isMobile),
-
-                              SizedBox(height: isMobile ? AppSizes.paddingL : AppSizes.paddingXL),
-
                               // Label Nomor Antrian
                               Text(
                                 AppStrings.nomorAntrian,
                                 style: AppTextStyles.bodyLarge.copyWith(
                                   color: AppColors.grey,
-                                  fontSize: isMobile ? 14 : 16,
+                                  fontSize: isMobile ? 12 : 14,
                                 ),
                               ),
 
-                              const SizedBox(height: AppSizes.paddingS),
+                              const SizedBox(height: 2),
 
                               // Nomor Antrian Besar
                               Text(
                                 controller.queueNumber,
                                 style: AppTextStyles.queueNumber.copyWith(
-                                  fontSize: isMobile ? 56 : 72,
+                                  fontSize: isMobile ? 42 : 56,
                                 ),
                               ),
-
-                              const SizedBox(height: AppSizes.paddingM),
 
                               // Estimasi
-                              Text(
-                                AppStrings.estimasi,
-                                style: AppTextStyles.label.copyWith(
-                                  fontSize: isMobile ? 12 : 14,
-                                ),
-                              ),
-                              const SizedBox(height: AppSizes.paddingXS),
-                              Text(
-                                controller.estimasi,
-                                style: AppTextStyles.heading3.copyWith(
-                                  fontSize: isMobile ? 20 : 24,
-                                ),
+                              Row(
+                                spacing: isMobile ? 12 : 16,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    AppStrings.estimasi,
+                                    style: AppTextStyles.label.copyWith(
+                                      fontSize: isMobile ? 11 : 13,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    controller.estimasi,
+                                    style: AppTextStyles.heading3.copyWith(
+                                      fontSize: isMobile ? 18 : 22,
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    height: isMobile
+                                        ? AppSizes.paddingS
+                                        : AppSizes.paddingM,
+                                  ),
+                                ],
                               ),
 
-                              SizedBox(height: isMobile ? AppSizes.paddingM : AppSizes.paddingL),
+                              SizedBox(
+                                height: isMobile
+                                    ? AppSizes.paddingS
+                                    : AppSizes.paddingM,
+                              ),
 
                               // Badge Poli
                               _buildPoliBadge(isMobile),
 
-                              SizedBox(height: isMobile ? AppSizes.paddingL : AppSizes.paddingXL),
-
                               // Divider
                               const Divider(color: AppColors.greyLight),
 
-                              SizedBox(height: isMobile ? AppSizes.paddingM : AppSizes.paddingL),
+                              SizedBox(
+                                height: isMobile
+                                    ? AppSizes.paddingS
+                                    : AppSizes.paddingM,
+                              ),
 
                               // Data Pasien
-                              _buildDataRow('Nama Lengkap', controller.nama, isMobile),
-                              const SizedBox(height: AppSizes.paddingM),
-                              _buildDataRow('Jenis Kelamin', controller.jenisKelamin, isMobile),
-                              const SizedBox(height: AppSizes.paddingM),
-                              _buildDataRow('Usia', '${controller.usia} tahun', isMobile),
+                              _buildDataRow(
+                                'Nama Lengkap',
+                                controller.nama,
+                                isMobile,
+                              ),
+                              const SizedBox(height: AppSizes.paddingS),
+                              _buildDataRow(
+                                'Jenis Kelamin',
+                                controller.jenisKelamin,
+                                isMobile,
+                              ),
+                              const SizedBox(height: AppSizes.paddingS),
+                              _buildDataRow(
+                                'Usia',
+                                '${controller.usia} tahun',
+                                isMobile,
+                              ),
 
-                              SizedBox(height: isMobile ? AppSizes.paddingL : AppSizes.paddingXL),
+                              SizedBox(
+                                height: isMobile
+                                    ? AppSizes.paddingM
+                                    : AppSizes.paddingL,
+                              ),
 
                               // Button Kembali ke Home
                               CustomButton(
                                 text: 'Kembali ke Beranda',
                                 onPressed: controller.goToHome,
-                                width: isMobile ? 180 : 220,
-                                height: isMobile ? 44 : 50,
+                                width: isMobile ? 160 : 250,
+                                height: isMobile ? 30 : 40,
                               ),
                             ],
                           ),
@@ -123,7 +155,7 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
               ),
 
               // Wave decoration di bagian bawah - fixed position
-              WaveDecoration(height: waveHeight),
+              WaveDecoration(height: 75),
             ],
           );
         },
@@ -133,13 +165,13 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
 
   // Header dengan logo dan title
   Widget _buildHeader(bool isMobile) {
-    final logoSize = isMobile ? 60.0 : 80.0;
-    
+    final logoSize = isMobile ? 50.0 : 65.0;
+
     return Column(
       children: [
         // Logo dari asset
         ClipRRect(
-          borderRadius: BorderRadius.circular(AppSizes.radiusL),
+          borderRadius: BorderRadius.circular(AppSizes.radiusM),
           child: Image.asset(
             AppAssets.logo,
             width: logoSize,
@@ -150,20 +182,22 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
               height: logoSize,
               decoration: BoxDecoration(
                 color: AppColors.primaryGreen,
-                borderRadius: BorderRadius.circular(AppSizes.radiusL),
+                borderRadius: BorderRadius.circular(AppSizes.radiusM),
               ),
               child: Icon(
                 Icons.local_hospital,
                 color: AppColors.white,
-                size: isMobile ? 32 : 40,
+                size: isMobile ? 26 : 34,
               ),
             ),
           ),
         ),
-        const SizedBox(height: AppSizes.paddingM),
+        const SizedBox(height: AppSizes.paddingS),
         Text(
           AppStrings.appName,
-          style: AppTextStyles.navbarTitle.copyWith(fontSize: isMobile ? 12 : 14),
+          style: AppTextStyles.navbarTitle.copyWith(
+            fontSize: isMobile ? 11 : 13,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -174,16 +208,18 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
   Widget _buildPoliBadge(bool isMobile) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? AppSizes.paddingM : AppSizes.paddingL,
-        vertical: isMobile ? AppSizes.paddingS : AppSizes.paddingM,
+        horizontal: isMobile ? AppSizes.paddingS : AppSizes.paddingM,
+        vertical: isMobile ? 6 : AppSizes.paddingS,
       ),
       decoration: BoxDecoration(
         color: AppColors.primaryGreen,
-        borderRadius: BorderRadius.circular(AppSizes.radiusRounded),
+        borderRadius: BorderRadius.circular(AppSizes.radiusL),
       ),
       child: Text(
         controller.poli.toUpperCase(),
-        style: AppTextStyles.buttonMedium.copyWith(fontSize: isMobile ? 12 : 14),
+        style: AppTextStyles.buttonMedium.copyWith(
+          fontSize: isMobile ? 11 : 13,
+        ),
       ),
     );
   }
@@ -195,13 +231,13 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
       children: [
         Text(
           label,
-          style: AppTextStyles.label.copyWith(fontSize: isMobile ? 12 : 14),
+          style: AppTextStyles.label.copyWith(fontSize: isMobile ? 11 : 13),
         ),
         Text(
           value,
           style: AppTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
-            fontSize: isMobile ? 14 : 16,
+            fontSize: isMobile ? 13 : 15,
           ),
         ),
       ],

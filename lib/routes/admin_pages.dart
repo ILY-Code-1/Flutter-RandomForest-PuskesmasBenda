@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'admin_routes.dart';
+import '../middlewares/auth_middleware.dart';
 import '../modules/admin/auth/views/login_page.dart';
 import '../modules/admin/auth/bindings/login_binding.dart';
 import '../modules/admin/dashboard/views/dashboard_page.dart';
@@ -32,6 +33,7 @@ class AdminPages {
       binding: DashboardBinding(),
       transition: Transition.fadeIn,
       transitionDuration: _transitionDuration,
+      middlewares: [AuthMiddleware()], // Proteksi auth
     ),
     GetPage(
       name: AdminRoutes.antrian,
@@ -39,6 +41,7 @@ class AdminPages {
       binding: AntrianBinding(),
       transition: Transition.fadeIn,
       transitionDuration: _transitionDuration,
+      middlewares: [AuthMiddleware()], // Proteksi auth
     ),
     GetPage(
       name: AdminRoutes.detailAntrian,
@@ -46,6 +49,7 @@ class AdminPages {
       binding: DetailAntrianBinding(),
       customTransition: _SlideTransition(),
       transitionDuration: _transitionDuration,
+      middlewares: [AuthMiddleware()], // Proteksi auth
     ),
   ];
 }

@@ -8,7 +8,6 @@ import '../../../core/constants/app_sizes.dart';
 import '../../../widgets/shared/navbar.dart';
 import '../../../widgets/shared/custom_button.dart';
 import '../../../widgets/shared/responsive_layout.dart';
-import '../../../core/constants/app_assets.dart';
 import '../controllers/pilih_poli_controller.dart';
 
 class PilihPoliPage extends GetView<PilihPoliController> {
@@ -37,8 +36,8 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                       const AppNavbar(),
                       SizedBox(
                         height: isMobile
-                            ? AppSizes.paddingL
-                            : AppSizes.paddingXL,
+                            ? AppSizes.paddingM
+                            : AppSizes.paddingL,
                       ),
 
                       // Header section dengan icon
@@ -46,8 +45,8 @@ class PilihPoliPage extends GetView<PilihPoliController> {
 
                       SizedBox(
                         height: isMobile
-                            ? AppSizes.paddingXL
-                            : AppSizes.paddingXXL,
+                            ? AppSizes.paddingL
+                            : AppSizes.paddingXL,
                       ),
 
                       // Poli Cards
@@ -55,8 +54,8 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                         maxWidth: AppSizes.maxContentWidth,
                         padding: EdgeInsets.symmetric(
                           horizontal: isMobile
-                              ? AppSizes.paddingM
-                              : AppSizes.paddingXL,
+                              ? AppSizes.paddingS
+                              : AppSizes.paddingM,
                         ),
                         child: isDesktop
                             ? _buildDesktopCards(isMobile)
@@ -65,8 +64,8 @@ class PilihPoliPage extends GetView<PilihPoliController> {
 
                       SizedBox(
                         height: isMobile
-                            ? AppSizes.paddingXL
-                            : AppSizes.paddingXXL,
+                            ? AppSizes.paddingM
+                            : AppSizes.paddingL,
                       ),
 
                       // Button Selanjutnya dengan animasi
@@ -87,7 +86,11 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                         ),
                       ),
 
-                      const SizedBox(height: AppSizes.paddingXXL),
+                      SizedBox(
+                        height: isMobile
+                            ? AppSizes.paddingL
+                            : AppSizes.paddingXL,
+                      ),
                     ],
                   ),
                 ),
@@ -167,64 +170,23 @@ class PilihPoliPage extends GetView<PilihPoliController> {
 
   // Header section dengan logo dan subtitle
   Widget _buildHeaderSection(bool isMobile) {
-    final logoSize = isMobile ? 70.0 : 90.0;
-
     return Column(
       children: [
-        // Logo dari asset dengan shadow
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(isMobile ? 20 : 25),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryGreen.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(isMobile ? 20 : 25),
-            child: Image.asset(
-              AppAssets.logo,
-              width: logoSize,
-              height: logoSize,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: logoSize,
-                height: logoSize,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.primaryGreen, AppColors.accentGreen],
-                  ),
-                  borderRadius: BorderRadius.circular(isMobile ? 20 : 25),
-                ),
-                child: Icon(
-                  Icons.local_hospital_rounded,
-                  color: AppColors.white,
-                  size: isMobile ? 36 : 46,
-                ),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: isMobile ? AppSizes.paddingM : AppSizes.paddingL),
+        SizedBox(height: isMobile ? AppSizes.paddingS : AppSizes.paddingM),
 
         // Title
         Text(
           AppStrings.pilihPoli,
           style: isMobile ? AppTextStyles.heading3 : AppTextStyles.heading2,
         ),
-        const SizedBox(height: AppSizes.paddingS),
+        const SizedBox(height: AppSizes.paddingXS),
 
         // Subtitle
         Text(
           'Pilih layanan kesehatan yang Anda butuhkan',
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.grey,
-            fontSize: isMobile ? 14 : 16,
+            fontSize: isMobile ? 13 : 15,
           ),
           textAlign: TextAlign.center,
         ),
@@ -234,13 +196,16 @@ class PilihPoliPage extends GetView<PilihPoliController> {
 
   // Layout card untuk desktop - horizontal
   Widget _buildDesktopCards(bool isMobile) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        controller.poliList.length,
-        (index) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingM),
-          child: _buildPoliCard(index, isDesktop: true, isMobile: isMobile),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          controller.poliList.length,
+          (index) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSizes.paddingS),
+            child: _buildPoliCard(index, isDesktop: true, isMobile: isMobile),
+          ),
         ),
       ),
     );
@@ -252,7 +217,7 @@ class PilihPoliPage extends GetView<PilihPoliController> {
       children: List.generate(
         controller.poliList.length,
         (index) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSizes.paddingM),
+          padding: const EdgeInsets.only(bottom: AppSizes.paddingS),
           child: _buildPoliCard(index, isDesktop: false, isMobile: isMobile),
         ),
       ),
@@ -279,22 +244,22 @@ class PilihPoliPage extends GetView<PilihPoliController> {
           curve: Curves.easeOutBack,
           scale: isSelected ? 1.02 : 1.0,
           child: Container(
-            width: isDesktop ? 220 : double.infinity,
-            height: isDesktop ? 240 : (isMobile ? 100 : 120),
+            width: isDesktop ? 185 : double.infinity,
+            height: isDesktop ? 200 : (isMobile ? 90 : 110),
             decoration: BoxDecoration(
               color: AppColors.white,
-              borderRadius: BorderRadius.circular(AppSizes.radiusXL),
+              borderRadius: BorderRadius.circular(AppSizes.radiusL),
               border: Border.all(
                 color: isSelected ? AppColors.primaryGreen : Colors.transparent,
-                width: 3,
+                width: 2.5,
               ),
               boxShadow: [
                 BoxShadow(
                   color: isSelected
                       ? AppColors.primaryGreen.withValues(alpha: 0.25)
                       : AppColors.shadowColor,
-                  blurRadius: isSelected ? 20 : 10,
-                  offset: Offset(0, isSelected ? 8 : 4),
+                  blurRadius: isSelected ? 16 : 8,
+                  offset: Offset(0, isSelected ? 6 : 3),
                 ),
               ],
             ),
@@ -328,7 +293,7 @@ class PilihPoliPage extends GetView<PilihPoliController> {
     bool isMobile,
   ) {
     return Padding(
-      padding: const EdgeInsets.all(AppSizes.paddingL),
+      padding: const EdgeInsets.all(AppSizes.paddingM),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -336,8 +301,8 @@ class PilihPoliPage extends GetView<PilihPoliController> {
           // Icon dengan gradient background
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            width: 80,
-            height: 80,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -346,20 +311,20 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                     ? [AppColors.primaryGreen, AppColors.accentGreen]
                     : gradientColors,
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
                   color:
                       (isSelected ? AppColors.primaryGreen : gradientColors[0])
                           .withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Icon(iconData, size: 40, color: AppColors.white),
+            child: Icon(iconData, size: 32, color: AppColors.white),
           ),
-          const SizedBox(height: AppSizes.paddingL),
+          const SizedBox(height: AppSizes.paddingM),
 
           // Nama poli
           Flexible(
@@ -369,14 +334,15 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                 color: isSelected
                     ? AppColors.primaryGreen
                     : AppColors.textSecondary,
-                fontSize: 18,
+                fontSize: 15,
+                height: 1.2,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(height: AppSizes.paddingS),
+          const SizedBox(height: AppSizes.paddingXS),
 
           // Description
           Flexible(
@@ -384,7 +350,8 @@ class PilihPoliPage extends GetView<PilihPoliController> {
               _getPoliDescription(poli['code']),
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.grey,
-                fontSize: 12,
+                fontSize: 11,
+                height: 1.2,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -399,10 +366,10 @@ class PilihPoliPage extends GetView<PilihPoliController> {
             duration: const Duration(milliseconds: 200),
             opacity: isSelected ? 1.0 : 0.0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               decoration: BoxDecoration(
                 color: AppColors.primaryGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
@@ -410,14 +377,14 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                   Icon(
                     Icons.check_circle,
                     color: AppColors.primaryGreen,
-                    size: 16,
+                    size: 14,
                   ),
-                  SizedBox(width: 4),
+                  SizedBox(width: 3),
                   Text(
                     'Dipilih',
                     style: TextStyle(
                       color: AppColors.primaryGreen,
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -439,14 +406,14 @@ class PilihPoliPage extends GetView<PilihPoliController> {
     bool isMobile,
   ) {
     return Padding(
-      padding: EdgeInsets.all(isMobile ? AppSizes.paddingM : AppSizes.paddingL),
+      padding: EdgeInsets.all(isMobile ? AppSizes.paddingS : AppSizes.paddingM),
       child: Row(
         children: [
           // Icon dengan gradient background
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            width: isMobile ? 56 : 70,
-            height: isMobile ? 56 : 70,
+            width: isMobile ? 50 : 64,
+            height: isMobile ? 50 : 64,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -455,24 +422,24 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                     ? [AppColors.primaryGreen, AppColors.accentGreen]
                     : gradientColors,
               ),
-              borderRadius: BorderRadius.circular(isMobile ? 14 : 18),
+              borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
               boxShadow: [
                 BoxShadow(
                   color:
                       (isSelected ? AppColors.primaryGreen : gradientColors[0])
                           .withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: Icon(
               iconData,
-              size: isMobile ? 28 : 36,
+              size: isMobile ? 26 : 32,
               color: AppColors.white,
             ),
           ),
-          SizedBox(width: isMobile ? AppSizes.paddingM : AppSizes.paddingL),
+          SizedBox(width: isMobile ? AppSizes.paddingS : AppSizes.paddingM),
 
           // Text content
           Expanded(
@@ -488,19 +455,21 @@ class PilihPoliPage extends GetView<PilihPoliController> {
                       color: isSelected
                           ? AppColors.primaryGreen
                           : AppColors.textSecondary,
-                      fontSize: isMobile ? 16 : 18,
+                      fontSize: isMobile ? 14 : 16,
+                      height: 1.2,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Flexible(
                   child: Text(
                     _getPoliDescription(poli['code']),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.grey,
-                      fontSize: isMobile ? 12 : 13,
+                      fontSize: isMobile ? 11 : 12,
+                      height: 1.2,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -510,13 +479,13 @@ class PilihPoliPage extends GetView<PilihPoliController> {
             ),
           ),
 
-          SizedBox(width: isMobile ? AppSizes.paddingS : AppSizes.paddingM),
+          SizedBox(width: isMobile ? AppSizes.paddingXS : AppSizes.paddingS),
 
           // Check icon
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: isSelected
                   ? AppColors.primaryGreen
@@ -526,7 +495,7 @@ class PilihPoliPage extends GetView<PilihPoliController> {
             child: Icon(
               isSelected ? Icons.check : Icons.arrow_forward_ios,
               color: isSelected ? AppColors.white : AppColors.grey,
-              size: isSelected ? 18 : 14,
+              size: isSelected ? 16 : 12,
             ),
           ),
         ],

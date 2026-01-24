@@ -151,14 +151,17 @@ class DashboardPage extends GetView<DashboardController> {
       ];
 
       if (isWide) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: cards
-              .map((card) => Padding(
-                    padding: const EdgeInsets.only(right: 24),
-                    child: card,
-                  ))
-              .toList(),
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: cards
+                .map((card) => Padding(
+                      padding: const EdgeInsets.only(right: 24),
+                      child: card,
+                    ))
+                .toList(),
+          ),
         );
       } else {
         return Wrap(

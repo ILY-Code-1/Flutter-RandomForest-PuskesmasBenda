@@ -3,7 +3,14 @@
     "allow": [
       "Edit(lib\\modules\\display_antrian\\bindings/**)",
       "Edit(lib\\modules\\display_antrian\\widgets/**)",
-      "Edit(**)"
+      "Edit(**)",
+      "Bash(flutter pub get)",
+      "Write(**)",
+      "Bash(if not exist \"lib\\middlewares\" mkdir lib\\middlewares)",
+      "Bash(cd C:\\Flutter\\FlutterProjects\\flutter_randomforest_puskesmas_benda && flutter clean)",
+      "Bash(dir \"C:\\Flutter\\FlutterProjects\\flutter_randomforest_puskesmas_benda\\assets\\audio\\bell.mp3\")",
+      "Bash(if exist \"assets\\audio\\bell.mp3\" (echo File exists) else (echo File NOT found))",
+      "Bash(if not exist \"assets\\audio\" mkdir assets\\audio)"
     ]
   }
 }

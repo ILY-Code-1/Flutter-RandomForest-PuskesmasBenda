@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/constants/admin_constants.dart';
 import '../../routes/admin_routes.dart';
+import '../../services/auth_service.dart';
 import 'confirm_dialog.dart';
 
 class AdminSidebar extends StatelessWidget {
@@ -152,6 +153,9 @@ class AdminSidebar extends StatelessWidget {
           if (isLogout) {
             final confirmed = await ConfirmDialog.showLogout();
             if (confirmed == true) {
+              // Clear session
+              await AuthService.logout();
+              // Navigate ke login
               Get.offAllNamed(route);
             }
           } else {

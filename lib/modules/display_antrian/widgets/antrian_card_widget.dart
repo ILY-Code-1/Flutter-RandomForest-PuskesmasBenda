@@ -76,7 +76,7 @@ class AntrianCardWidget extends StatelessWidget {
 
   Widget _buildQueueButton(QueueModel queue) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       decoration: BoxDecoration(
         color: AppColors.primaryGreen,
         borderRadius: BorderRadius.circular(12),
@@ -84,7 +84,7 @@ class AntrianCardWidget extends StatelessWidget {
       child: Text(
         queue.nomorAntrian,
         style: const TextStyle(
-          fontSize: 18,
+          fontSize: 22,
           fontWeight: FontWeight.bold,
           color: AppColors.white,
         ),

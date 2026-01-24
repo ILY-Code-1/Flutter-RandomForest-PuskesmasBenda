@@ -51,6 +51,9 @@ dependencies:
   
   # Audio for web
   audioplayers: ^6.1.0
+  
+  # Local storage for authentication
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +80,7 @@ flutter:
   # Assets
   assets:
     - web/favicon.png
+    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

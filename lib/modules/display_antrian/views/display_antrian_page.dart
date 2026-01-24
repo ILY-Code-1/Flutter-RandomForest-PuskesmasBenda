@@ -44,34 +44,60 @@ class DisplayAntrianPage extends GetView<DisplayAntrianController> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Obx(() => Row(
-                    children: [
-                      // Poli Umum
-                      Expanded(
-                        child: AntrianCardWidget(
-                          title: 'Poli Umum',
-                          antrianList: controller.antrianPoliUmum.toList(),
+                  child: Obx(() => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        // Poli Umum
+                        SizedBox(
+                          width: 220,
+                          child: AntrianCardWidget(
+                            title: 'Poli Umum',
+                            antrianList: controller.antrianPoliUmum.toList(),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 24),
-                      
-                      // Poli Gigi
-                      Expanded(
-                        child: AntrianCardWidget(
-                          title: 'Poli Gigi',
-                          antrianList: controller.antrianPoliGigi.toList(),
+                        const SizedBox(width: 16),
+                        
+                        // Poli Lansia
+                        SizedBox(
+                          width: 220,
+                          child: AntrianCardWidget(
+                            title: 'Poli Lansia',
+                            antrianList: controller.antrianPoliLansia.toList(),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 24),
-                      
-                      // Poli KIA
-                      Expanded(
-                        child: AntrianCardWidget(
-                          title: 'Poli KIA',
-                          antrianList: controller.antrianPoliKia.toList(),
+                        const SizedBox(width: 16),
+                        
+                        // Poli Anak
+                        SizedBox(
+                          width: 220,
+                          child: AntrianCardWidget(
+                            title: 'Poli Anak',
+                            antrianList: controller.antrianPoliAnak.toList(),
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 16),
+                        
+                        // Poli KIA
+                        SizedBox(
+                          width: 220,
+                          child: AntrianCardWidget(
+                            title: 'Poli KIA',
+                            antrianList: controller.antrianPoliKia.toList(),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        
+                        // Poli Gigi
+                        SizedBox(
+                          width: 220,
+                          child: AntrianCardWidget(
+                            title: 'Poli Gigi',
+                            antrianList: controller.antrianPoliGigi.toList(),
+                          ),
+                        ),
+                      ],
+                    ),
                   )),
                 ),
               ),

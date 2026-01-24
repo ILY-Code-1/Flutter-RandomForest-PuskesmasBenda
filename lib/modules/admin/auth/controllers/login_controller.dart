@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../routes/admin_routes.dart';
+import '../../../../services/auth_service.dart';
 
 class LoginController extends GetxController {
   // Daftar kredensial admin yang valid
@@ -57,7 +58,12 @@ class LoginController extends GetxController {
 
     // Validasi kredensial
     if (_validateCredentials(username, password)) {
+      // Set login session
+      await AuthService.setLogin(username);
+      
       isLoading.value = false;
+      
+      // Navigate ke dashboard
       Get.offAllNamed(AdminRoutes.dashboard);
     } else {
       isLoading.value = false;
