@@ -69,9 +69,7 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
                               ),
 
                               // Estimasi
-                              Row(
-                                spacing: isMobile ? 12 : 16,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Column(
                                 children: [
                                   Text(
                                     AppStrings.estimasi,
@@ -79,18 +77,44 @@ class NomorAntrianPage extends GetView<NomorAntrianController> {
                                       fontSize: isMobile ? 11 : 13,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    controller.estimasi,
-                                    style: AppTextStyles.heading3.copyWith(
-                                      fontSize: isMobile ? 18 : 22,
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isMobile ? 12 : 16,
+                                      vertical: isMobile ? 10 : 14,
                                     ),
-                                  ),
-
-                                  SizedBox(
-                                    height: isMobile
-                                        ? AppSizes.paddingS
-                                        : AppSizes.paddingM,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryGreen.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: AppColors.primaryGreen.withValues(alpha: 0.3),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        // Jam dipanggil (bold)
+                                        Text(
+                                          controller.estimasi.split('\n')[0],
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.heading3.copyWith(
+                                            fontSize: isMobile ? 16 : 20,
+                                            color: AppColors.primaryGreen,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        // Penjelasan detail
+                                        Text(
+                                          controller.estimasi.split('\n').skip(1).join('\n'),
+                                          textAlign: TextAlign.center,
+                                          style: AppTextStyles.bodyMedium.copyWith(
+                                            fontSize: isMobile ? 11 : 13,
+                                            color: AppColors.textPrimary,
+                                            height: 1.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

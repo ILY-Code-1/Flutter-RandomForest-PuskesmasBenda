@@ -56,23 +56,102 @@ class NomorAntrianController extends GetxController {
   String get usia => queueData.usia.toString();
   String get poli => queueData.poli;
   
-  /// Format estimasi waktu tunggu
   String get estimasi {
     final minutes = queueData.estimasiWaktuTunggu;
-    if (minutes < 60) {
-      return '$minutes menit';
+    final jamDipanggil = queueData.jamEfektifPelayanan;
+    final jumlahAntrianSebelum = queueData.jumlahAntrianSebelum;
+    final jamBukaPuskesmas = queueData.jamBukaPuskesmas;
+
+    final hariText = _formatHari(jamDipanggil);
+    final jamText = DateFormat('HH:mm').format(jamDipanggil);
+    final durasiText = _formatDurasi(minutes);
+
+    // Hitung jam buka dari string "08:30"
+    final jamBukaParts = jamBukaPuskesmas.split(':');
+    final jamBukaHour = int.parse(jamBukaParts[0]);
+    final jamBukaMinute = int.parse(jamBukaParts[1]);
+    final jamBukaDateTime = DateTime(
+      jamDipanggil.year,
+      jamDipanggil.month,
+      jamDipanggil.day,
+      jamBukaHour,
+      jamBukaMinute,
+    );
+
+    // Format waktu sekarang
+    final waktuSekarang = DateTime.now();
+    final waktuSekarangText = DateFormat('HH:mm').format(waktuSekarang);
+    final jamBukaText = DateFormat('HH:mm').format(jamBukaDateTime);
+
+    // Cek apakah jamDipanggil hari yang sama dengan hari ini
+    final today = DateTime(waktuSekarang.year, waktuSekarang.month, waktuSekarang.day);
+    final targetDate = DateTime(jamDipanggil.year, jamDipanggil.month, jamDipanggil.day);
+    final isSameDay = today.isAtSameMomentAs(targetDate);
+
+    // Buat penjelasan detail
+    String penjelasan;
+
+    if (!isSameDay) {
+      // Antrian untuk hari berbeda (besok/lusa/dst)
+      // Gunakan jam buka sebagai referensi
+      penjelasan = '$durasiText dari jam buka ($jamBukaText)';
+    } else {
+      // Antrian hari ini
+      if (jumlahAntrianSebelum == 0) {
+        // Antrian pertama
+        if (waktuSekarang.isBefore(jamBukaDateTime)) {
+          // Belum jam buka
+          penjelasan = '$durasiText dari jam buka ($jamBukaText)';
+        } else {
+          // Sudah lewat jam buka
+          penjelasan = '$durasiText dari sekarang ($waktuSekarangText)';
+        }
+      } else {
+        // Ada antrian sebelumnya
+        penjelasan = '$durasiText dari sekarang ($waktuSekarangText)';
+      }
     }
-    final hours = minutes ~/ 60;
-    final mins = minutes % 60;
-    if (mins == 0) {
-      return '$hours jam';
+
+    // Tambahkan info tambahan jika ada antrian sebelumnya
+    String infoTambahan = '';
+    if (jumlahAntrianSebelum > 0) {
+      infoTambahan = '\nsetelah $jumlahAntrianSebelum antrian';
     }
-    return '$hours jam $mins menit';
+
+    return '$hariText • $jamText\n$penjelasan$infoTambahan';
   }
 
-  /// Format perkiraan jam dipanggil
+  String _formatHari(DateTime tanggal) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final targetDate = DateTime(tanggal.year, tanggal.month, tanggal.day);
+
+    final difference = targetDate.difference(today).inDays;
+
+    if (difference == 0) {
+      return 'Hari ini';
+    } else if (difference == 1) {
+      return 'Besok';
+    } else if (difference == 2) {
+      return 'Lusa';
+    } else {
+      return DateFormat('dd MMM yyyy').format(tanggal);
+    }
+  }
+
   String get perkiraanDipanggil {
     return DateFormat('HH:mm').format(queueData.jamEfektifPelayanan);
+  }
+
+  String _formatDurasi(int minutes) {
+    if (minutes < 60) return '$minutes menit';
+
+    final jam = minutes ~/ 60;
+    final menit = minutes % 60;
+
+    return menit == 0
+        ? '$jam jam'
+        : '$jam jam $menit menit';
   }
 
   /// Download tiket sebagai PDF

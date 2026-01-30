@@ -6,4 +6,5 @@ class AdminRoutes {
   static const String dashboard = '/admin/dashboard';
   static const String antrian = '/admin/antrian';
   static const String detailAntrian = '/admin/antrian/detail';
+  static const String statistik = '/admin/statistik';
 }

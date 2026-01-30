@@ -55,6 +55,13 @@ dependencies:
   # Local storage for authentication
   shared_preferences: ^2.3.3
 
+  # Charts for statistics
+  fl_chart: ^0.68.0
+
+  # Localizations
+  flutter_localizations:
+    sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

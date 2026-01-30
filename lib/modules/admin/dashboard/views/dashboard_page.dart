@@ -25,13 +25,35 @@ class DashboardPage extends GetView<DashboardController> {
                 _buildWelcomeSection(),
                 const SizedBox(height: 32),
                 // Summary Cards Section
-                const Text(
-                  'Jumlah Antrian Selesai',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryGreen,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Jumlah Antrian per Poli',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryGreen,
+                      ),
+                    ),
+                    Obx(() => controller.isLoading.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () => controller.loadData(),
+                            icon: const Icon(Icons.refresh),
+                            tooltip: 'Reload Data',
+                            style: IconButton.styleFrom(
+                              backgroundColor: AppColors.primaryGreen.withValues(alpha: 0.1),
+                              foregroundColor: AppColors.primaryGreen,
+                            ),
+                          )),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 _buildSummarySection(constraints),
@@ -187,7 +209,7 @@ class DashboardPage extends GetView<DashboardController> {
         _StatItem(
           icon: Icons.check_circle_outline,
           label: 'Selesai Dilayani',
-          value: controller.totalAntrianSelesai.toString(),
+          value: controller.totalSelesai.toString(),
           color: AppColors.primaryGreen,
         ),
         _StatItem(
@@ -305,7 +327,7 @@ class DashboardPage extends GetView<DashboardController> {
                 icon: Icons.analytics_outlined,
                 title: 'Lihat Statistik',
                 subtitle: 'Pantau performa layanan harian',
-                onTap: () {},
+                onTap: () => Get.toNamed(AdminRoutes.statistik),
               ),
             ),
           ],

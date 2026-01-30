@@ -12,6 +12,8 @@ import '../modules/admin/antrian/views/antrian_page.dart';
 import '../modules/admin/antrian/bindings/antrian_binding.dart';
 import '../modules/admin/antrian/views/detail_antrian_page.dart';
 import '../modules/admin/antrian/bindings/detail_antrian_binding.dart';
+import '../modules/admin/statistik/views/statistik_page.dart';
+import '../modules/admin/statistik/bindings/statistik_binding.dart';
 
 class AdminPages {
   AdminPages._();
@@ -48,6 +50,14 @@ class AdminPages {
       page: () => const DetailAntrianPage(),
       binding: DetailAntrianBinding(),
       customTransition: _SlideTransition(),
+      transitionDuration: _transitionDuration,
+      middlewares: [AuthMiddleware()], // Proteksi auth
+    ),
+    GetPage(
+      name: AdminRoutes.statistik,
+      page: () => const StatistikPage(),
+      binding: StatistikBinding(),
+      transition: Transition.fadeIn,
       transitionDuration: _transitionDuration,
       middlewares: [AuthMiddleware()], // Proteksi auth
     ),

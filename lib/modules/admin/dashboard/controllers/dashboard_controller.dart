@@ -17,17 +17,13 @@ class DashboardController extends GetxController {
   final totalAntrianHariIni = 0.obs;
   final totalMenunggu = 0.obs;
   final totalDilayani = 0.obs;
+  final totalSelesai = 0.obs;
 
   // Tanggal yang dipilih
   final selectedDate = DateTime.now().obs;
   
   // Loading state
   final isLoading = false.obs;
-
-  // Get total antrian selesai
-  int get totalAntrianSelesai => 
-      poliUmumCount.value + poliLansiaCount.value + poliAnakCount.value + 
-      poliKiaCount.value + poliGigiCount.value;
 
   // Format tanggal untuk display
   String get currentDate => DateFormat('dd-MM-yyyy').format(selectedDate.value);
@@ -47,6 +43,7 @@ class DashboardController extends GetxController {
       totalAntrianHariIni.value = ringkasan['total'] ?? 0;
       totalMenunggu.value = ringkasan['menunggu'] ?? 0;
       totalDilayani.value = ringkasan['dilayani'] ?? 0;
+      totalSelesai.value = ringkasan['selesai'] ?? 0;
       poliUmumCount.value = ringkasan['poliUmum'] ?? 0;
       poliLansiaCount.value = ringkasan['poliLansia'] ?? 0;
       poliAnakCount.value = ringkasan['poliAnak'] ?? 0;
@@ -83,6 +80,7 @@ class DashboardController extends GetxController {
       int total = antrian.length;
       int menunggu = 0;
       int dilayani = 0;
+      int selesai = 0;
       int poliUmum = 0;
       int poliLansia = 0;
       int poliAnak = 0;
@@ -96,6 +94,8 @@ class DashboardController extends GetxController {
             break;
           case 'Dilayani':
             dilayani++;
+          case 'Selesai':
+            selesai++;
             break;
         }
 
@@ -121,6 +121,7 @@ class DashboardController extends GetxController {
       totalAntrianHariIni.value = total;
       totalMenunggu.value = menunggu;
       totalDilayani.value = dilayani;
+      totalSelesai.value = selesai;
       poliUmumCount.value = poliUmum;
       poliLansiaCount.value = poliLansia;
       poliAnakCount.value = poliAnak;
