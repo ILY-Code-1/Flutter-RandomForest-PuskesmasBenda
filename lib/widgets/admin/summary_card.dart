@@ -93,7 +93,7 @@ class SummaryCard extends StatelessWidget {
                     ),
                     SizedBox(width: 4),
                     Text(
-                      'Selesai',
+                      'Hari ini',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,

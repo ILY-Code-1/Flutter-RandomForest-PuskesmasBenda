@@ -2,7 +2,6 @@
 /// Menampilkan daftar antrian realtime dengan panggilan
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
@@ -12,34 +11,24 @@ import '../../../services/queue_service.dart';
 import '../../../core/constants/poli_constants.dart';
 
 class DisplayAntrianController extends GetxController {
-  // Data antrian per poli
   final antrianPoliUmum = <QueueModel>[].obs;
   final antrianPoliLansia = <QueueModel>[].obs;
   final antrianPoliAnak = <QueueModel>[].obs;
   final antrianPoliKia = <QueueModel>[].obs;
   final antrianPoliGigi = <QueueModel>[].obs;
 
-  // Realtime clock
   final currentTime = ''.obs;
   final currentDate = ''.obs;
 
-  // Called queue untuk dialog (dari Firebase realtime)
   final calledQueueData = Rxn<Map<String, dynamic>>();
   final showCallDialog = false.obs;
 
-  // Audio player untuk notification sound
   final AudioPlayer _audioPlayer = AudioPlayer();
-
-  // Text-to-Speech untuk pengumuman antrian
   final FlutterTts _flutterTts = FlutterTts();
 
-  // Flag untuk tracking apakah suara sudah diputar
   final _hasPlayedAnnouncement = <String, bool>{}.obs;
 
-  // Timer untuk clock
   Timer? _clockTimer;
-
-  // Stream subscriptions
   StreamSubscription? _antrianSubscription;
   StreamSubscription? _callSubscription;
 
@@ -64,7 +53,6 @@ class DisplayAntrianController extends GetxController {
     super.onClose();
   }
 
-  /// Start realtime clock
   void _startClock() {
     _updateTime();
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -84,7 +72,6 @@ class DisplayAntrianController extends GetxController {
     _ttsReady = true;
   }
 
-  /// Initialize Text-to-Speech
   Future<void> _initTts() async {
     await _flutterTts.setLanguage('id-ID');
     await _flutterTts.setSpeechRate(0.65);
@@ -102,7 +89,6 @@ class DisplayAntrianController extends GetxController {
     }
   }
 
-  /// Mapping kode poli ke nama poli
   String _getPoliName(String kodePoli) {
     switch (kodePoli) {
       case 'PK':
@@ -120,34 +106,22 @@ class DisplayAntrianController extends GetxController {
     }
   }
 
-  /// Listen to antrian stream
   void _listenToAntrian() {
-    _antrianSubscription = QueueService.streamAntrianMenungguHariIni().listen(
-      (antrianList) {
-        // Filter per poli
-        antrianPoliUmum.value = antrianList
-            .where((q) => q.kodePoli == 'PU')
-            .toList();
-        antrianPoliLansia.value = antrianList
-            .where((q) => q.kodePoli == 'PL')
-            .toList();
-        antrianPoliAnak.value = antrianList
-            .where((q) => q.kodePoli == 'PA')
-            .toList();
-        antrianPoliKia.value = antrianList
-            .where((q) => q.kodePoli == 'PK')
-            .toList();
-        antrianPoliGigi.value = antrianList
-            .where((q) => q.kodePoli == 'PG')
-            .toList();
-      },
-      onError: (e) {
-        debugPrint('Error listening to antrian: $e');
-      },
-    );
+    _antrianSubscription =
+        QueueService.streamAntrianMenungguHariIni().listen((antrianList) {
+      antrianPoliUmum.value =
+          antrianList.where((q) => q.kodePoli == 'PU').toList();
+      antrianPoliLansia.value =
+          antrianList.where((q) => q.kodePoli == 'PL').toList();
+      antrianPoliAnak.value =
+          antrianList.where((q) => q.kodePoli == 'PA').toList();
+      antrianPoliKia.value =
+          antrianList.where((q) => q.kodePoli == 'PK').toList();
+      antrianPoliGigi.value =
+          antrianList.where((q) => q.kodePoli == 'PG').toList();
+    });
   }
 
-  /// Listen to call queue dari Firebase (realtime dari admin)
   void _listenToCallQueue() {
     _callSubscription =
         QueueService.streamCalledQueue().listen((data) async {
@@ -155,47 +129,36 @@ class DisplayAntrianController extends GetxController {
         final nomorAntrian = data['nomorAntrian'] as String;
         final kodePoli = data['kodePoli'] as String;
 
-        // Cegah double trigger
         if (_hasPlayedAnnouncement[nomorAntrian] == true) return;
 
         calledQueueData.value = data;
         showCallDialog.value = true;
 
-        // 🔔 Bell dulu
         await _playBellSound();
-
-        // ⏳ Tunggu bell ±5 detik
         await Future.delayed(const Duration(seconds: 5));
-
-        // 🗣️ TTS
         await _playQueueAnnouncement(nomorAntrian, kodePoli);
-
-        // ⏳ Tunggu TTS selesai (sudah di-handle awaitSpeakCompletion)
         await Future.delayed(const Duration(seconds: 1));
 
-        // 🔁 Reset flag untuk panggilan berikutnya
         _hasPlayedAnnouncement[nomorAntrian] = false;
 
-        // 👻 Auto hide
         showCallDialog.value = false;
         calledQueueData.value = null;
       }
     });
   }
 
-  /// Play bell sound untuk panggilan antrian
   Future<void> _playBellSound() async {
     try {
-      await _audioPlayer.play(
-        AssetSource('audio/bell.mp3'),
-        volume: 1.0,
-      );
+      await _audioPlayer.stop();
+      await _audioPlayer.setReleaseMode(ReleaseMode.stop);
+      await _audioPlayer.setVolume(1.0);
+      await _audioPlayer.setSource(AssetSource('audio/bell.mp3'));
+      await _audioPlayer.resume();
     } catch (_) {
       await SystemSound.play(SystemSoundType.alert);
     }
   }
 
-  /// Play pengumuman antrian menggunakan TTS
   Future<void> _playQueueAnnouncement(
       String nomorAntrian, String kodePoli) async {
     if (_hasPlayedAnnouncement[nomorAntrian] == true) return;
@@ -210,10 +173,8 @@ class DisplayAntrianController extends GetxController {
     await _flutterTts.speak(announcement);
   }
 
-  /// Get list poli untuk display
   List<Map<String, dynamic>> get poliList => PoliConstants.poliList;
 
-  /// Get antrian by poli code
   List<QueueModel> getAntrianByPoli(String kodePoli) {
     switch (kodePoli) {
       case 'PU':
