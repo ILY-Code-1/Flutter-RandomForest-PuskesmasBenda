@@ -53,7 +53,7 @@ dependencies:
   audioplayers: ^6.1.0
 
   # Text-to-Speech for queue announcement
-  flutter_tts: ^4.1.0
+  flutter_tts: ^4.2.5
 
   # Local storage for authentication
   shared_preferences: ^2.3.3

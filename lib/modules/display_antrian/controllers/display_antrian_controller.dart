@@ -11,6 +11,7 @@ import '../../../services/queue_service.dart';
 import '../../../core/constants/poli_constants.dart';
 
 class DisplayAntrianController extends GetxController {
+  // ===================== DATA =====================
   final antrianPoliUmum = <QueueModel>[].obs;
   final antrianPoliLansia = <QueueModel>[].obs;
   final antrianPoliAnak = <QueueModel>[].obs;
@@ -23,6 +24,7 @@ class DisplayAntrianController extends GetxController {
   final calledQueueData = Rxn<Map<String, dynamic>>();
   final showCallDialog = false.obs;
 
+  // ===================== AUDIO =====================
   final AudioPlayer _audioPlayer = AudioPlayer();
   final FlutterTts _flutterTts = FlutterTts();
 
@@ -34,10 +36,11 @@ class DisplayAntrianController extends GetxController {
 
   bool _ttsReady = false;
 
+  // ===================== INIT =====================
   @override
   void onInit() {
     super.onInit();
-    _initTts();
+    _initTtsLikeTestController(); // 🔥 PENTING
     _startClock();
     _listenToAntrian();
     _listenToCallQueue();
@@ -53,11 +56,13 @@ class DisplayAntrianController extends GetxController {
     super.onClose();
   }
 
+  // ===================== CLOCK =====================
   void _startClock() {
     _updateTime();
-    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _updateTime();
-    });
+    _clockTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _updateTime(),
+    );
   }
 
   void _updateTime() {
@@ -66,29 +71,116 @@ class DisplayAntrianController extends GetxController {
     currentDate.value = DateFormat('EEEE, dd MMM yyyy', 'id').format(now);
   }
 
-  Future<void> _ensureTtsReady() async {
+  // ===================== TTS (COPY DARI TEST CONTROLLER) =====================
+  Future<void> _initTtsLikeTestController() async {
     if (_ttsReady) return;
-    await _initTts();
+
+    await _flutterTts.setLanguage("id-ID");
+    await _setIndonesianFemaleVoice(); // 🔥 SAMA PERSIS
+    await _flutterTts.speak(" "); // 🔥 pancingan browser
+
     _ttsReady = true;
   }
 
-  Future<void> _initTts() async {
-    await _flutterTts.setLanguage('id-ID');
-    await _flutterTts.setSpeechRate(0.65);
-    await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.1);
-    await _flutterTts.awaitSpeakCompletion(true);
+  Future<void> _setIndonesianFemaleVoice() async {
+    List<dynamic>? voices = await _flutterTts.getVoices;
 
-    final voices = await _flutterTts.getVoices;
-    for (final voice in voices) {
-      if (voice.locale.contains('id') &&
-          voice.name.toLowerCase().contains('female')) {
-        await _flutterTts.setVoice(voice);
-        break;
+    if (voices == null) return;
+
+    try {
+      var indoVoice = voices.firstWhere(
+        (voice) =>
+            voice['locale'].toString().contains('id') &&
+            (voice['name'].toString().toLowerCase().contains('female') ||
+                voice['name'].toString().toLowerCase().contains('indonesia')),
+        orElse: () => null,
+      );
+
+      if (indoVoice != null) {
+        await _flutterTts.setVoice({
+          "name": indoVoice['name'],
+          "locale": indoVoice['locale'],
+        });
+        print("✅ Suara wanita Indonesia: ${indoVoice['name']}");
+      } else {
+        await _flutterTts.setLanguage("id-ID");
+        print("⚠️ Voice cewek ID tidak ditemukan, fallback");
       }
+    } catch (_) {
+      await _flutterTts.setLanguage("id-ID");
     }
   }
 
+  // ===================== STREAM =====================
+  void _listenToAntrian() {
+    _antrianSubscription = QueueService.streamAntrianMenungguHariIni().listen((
+      list,
+    ) {
+      antrianPoliUmum.value = list.where((q) => q.kodePoli == 'PU').toList();
+      antrianPoliLansia.value = list.where((q) => q.kodePoli == 'PL').toList();
+      antrianPoliAnak.value = list.where((q) => q.kodePoli == 'PA').toList();
+      antrianPoliKia.value = list.where((q) => q.kodePoli == 'PK').toList();
+      antrianPoliGigi.value = list.where((q) => q.kodePoli == 'PG').toList();
+    });
+  }
+
+  void _listenToCallQueue() {
+    _callSubscription = QueueService.streamCalledQueue().listen((data) async {
+      if (data == null || data['isActive'] != true) return;
+
+      final nomor = data['nomorAntrian'] as String;
+      final poli = data['kodePoli'] as String;
+
+      if (_hasPlayedAnnouncement[nomor] == true) return;
+
+      calledQueueData.value = data;
+      showCallDialog.value = true;
+
+      // 🔔 BELL 5 DETIK
+      await _playBellSound();
+      await Future.delayed(const Duration(milliseconds: 5300));
+
+      // 🔊 WANITA INDONESIA
+      await _playQueueAnnouncement(nomor, poli);
+
+      // await Future.delayed(const Duration(milliseconds: 5500));
+      _hasPlayedAnnouncement[nomor] = false;
+      showCallDialog.value = false;
+      calledQueueData.value = null;
+    });
+  }
+
+  // ===================== AUDIO =====================
+  Future<void> _playBellSound() async {
+    try {
+      await _audioPlayer.stop();
+      await _audioPlayer.setVolume(1.0);
+      await _audioPlayer.setSource(AssetSource('audio/bell.mp3'));
+      await _audioPlayer.resume();
+    } catch (_) {
+      await SystemSound.play(SystemSoundType.alert);
+    }
+  }
+
+  Future<void> _playQueueAnnouncement(
+    String nomorAntrian,
+    String kodePoli,
+  ) async {
+    if (_hasPlayedAnnouncement[nomorAntrian] == true) return;
+    _hasPlayedAnnouncement[nomorAntrian] = true;
+
+    final poliName = _getPoliName(kodePoli);
+
+    // 🔥 SPLIT BIAR BACA BENAR
+    final formatted = nomorAntrian.split('').join(' ');
+
+    final announcement =
+        'Nomor antrian $formatted, silakan menuju ke $poliName';
+
+    await _flutterTts.speak(announcement);
+  }
+
+  // ===================== UTIL =====================
   String _getPoliName(String kodePoli) {
     switch (kodePoli) {
       case 'PK':
@@ -104,73 +196,6 @@ class DisplayAntrianController extends GetxController {
       default:
         return 'Poli';
     }
-  }
-
-  void _listenToAntrian() {
-    _antrianSubscription =
-        QueueService.streamAntrianMenungguHariIni().listen((antrianList) {
-      antrianPoliUmum.value =
-          antrianList.where((q) => q.kodePoli == 'PU').toList();
-      antrianPoliLansia.value =
-          antrianList.where((q) => q.kodePoli == 'PL').toList();
-      antrianPoliAnak.value =
-          antrianList.where((q) => q.kodePoli == 'PA').toList();
-      antrianPoliKia.value =
-          antrianList.where((q) => q.kodePoli == 'PK').toList();
-      antrianPoliGigi.value =
-          antrianList.where((q) => q.kodePoli == 'PG').toList();
-    });
-  }
-
-  void _listenToCallQueue() {
-    _callSubscription =
-        QueueService.streamCalledQueue().listen((data) async {
-      if (data != null && data['isActive'] == true) {
-        final nomorAntrian = data['nomorAntrian'] as String;
-        final kodePoli = data['kodePoli'] as String;
-
-        if (_hasPlayedAnnouncement[nomorAntrian] == true) return;
-
-        calledQueueData.value = data;
-        showCallDialog.value = true;
-
-        await _playBellSound();
-        await Future.delayed(const Duration(seconds: 5));
-        await _playQueueAnnouncement(nomorAntrian, kodePoli);
-        await Future.delayed(const Duration(seconds: 1));
-
-        _hasPlayedAnnouncement[nomorAntrian] = false;
-
-        showCallDialog.value = false;
-        calledQueueData.value = null;
-      }
-    });
-  }
-
-  Future<void> _playBellSound() async {
-    try {
-      await _audioPlayer.stop();
-      await _audioPlayer.setReleaseMode(ReleaseMode.stop);
-      await _audioPlayer.setVolume(1.0);
-      await _audioPlayer.setSource(AssetSource('audio/bell.mp3'));
-      await _audioPlayer.resume();
-    } catch (_) {
-      await SystemSound.play(SystemSoundType.alert);
-    }
-  }
-
-  Future<void> _playQueueAnnouncement(
-      String nomorAntrian, String kodePoli) async {
-    if (_hasPlayedAnnouncement[nomorAntrian] == true) return;
-
-    _hasPlayedAnnouncement[nomorAntrian] = true;
-
-    final poliName = _getPoliName(kodePoli);
-    final announcement =
-        'Nomor antrian $nomorAntrian menuju ke $poliName';
-
-    await _ensureTtsReady();
-    await _flutterTts.speak(announcement);
   }
 
   List<Map<String, dynamic>> get poliList => PoliConstants.poliList;
