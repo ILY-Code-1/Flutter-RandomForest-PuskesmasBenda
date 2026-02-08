@@ -89,10 +89,17 @@ class DisplayAntrianController extends GetxController {
 
     try {
       var indoVoice = voices.firstWhere(
-        (voice) =>
-            voice['locale'].toString().contains('id') &&
-            (voice['name'].toString().toLowerCase().contains('female') ||
-                voice['name'].toString().toLowerCase().contains('indonesia')),
+        (voice) {
+          final locale = voice['locale'].toString().toLowerCase();
+          final name = voice['name'].toString().toLowerCase();
+
+          return locale.contains('id') &&
+              (
+                name.contains('network') || // biasanya voice cewek natural
+                name.contains('standard') ||
+                name.contains('id-')
+              );
+        },
         orElse: () => null,
       );
 

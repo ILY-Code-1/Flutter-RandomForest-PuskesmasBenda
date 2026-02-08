@@ -1,7 +1,6 @@
 /// Halaman Login Admin
 /// Background hijau muda dengan wave, card login di tengah
 import 'package:flutter/material.dart';
-import 'package:flutter_randomforest_puskesmas_benda/modules/display_antrian/controllers/ttsTestController.dart';
 import 'package:get/get.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -12,7 +11,6 @@ class AdminLoginPage extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(TtsTestController());
     return Scaffold(
       backgroundColor: AppColors.backgroundGreen,
       body: LayoutBuilder(
@@ -38,47 +36,6 @@ class AdminLoginPage extends GetView<LoginController> {
                     child: _buildLoginCard(),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 20,
-                      ),
-                    ),
-                    onPressed: () => (),
-                    child: const Text(
-                      "1. AKTIFKAN MESIN SUARA",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Tombol 2: Test Suara
-                  Obx(
-                    () => ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: controller.isEngineReady.value
-                            ? const Color(0xFFCCFF00)
-                            : Colors.grey,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 20,
-                        ),
-                      ),
-                      onPressed: () => controller.playTestSound(),
-                      child: const Text(
-                        "2. TEST PANGGILAN SEKARANG",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           );
