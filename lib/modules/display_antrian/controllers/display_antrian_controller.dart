@@ -181,7 +181,7 @@ class DisplayAntrianController extends GetxController {
     final poliName = _getPoliName(kodePoli);
 
     // 🔥 SPLIT BIAR BACA BENAR
-    final formatted = nomorAntrian.split('').join(' ');
+    final formatted = formatNomorAntrian(nomorAntrian);
 
     final announcement =
         'Nomor antrian $formatted, silakan menuju ke $poliName';
@@ -227,5 +227,24 @@ class DisplayAntrianController extends GetxController {
       default:
         return [];
     }
+  }
+
+  String formatNomorAntrian(String nomorAntrian) {
+    final parts = nomorAntrian.split('-');
+    if (parts.length != 2) {
+      return nomorAntrian.split('').join(' ');
+    }
+    final prefix = parts[0];
+    final numberPart = parts[1];
+    final spelledPrefix = prefix.split('').join(' ');
+    String spelledNumber;
+    if (numberPart.startsWith('0')) {
+      // Kalau ada 0 depan → eja semua digit
+      spelledNumber = numberPart.split('').join(' ');
+    } else {
+      // Berapa pun digitnya → baca sebagai angka utuh
+      spelledNumber = int.tryParse(numberPart)?.toString() ?? numberPart;
+    }
+    return '$spelledPrefix - $spelledNumber';
   }
 }
