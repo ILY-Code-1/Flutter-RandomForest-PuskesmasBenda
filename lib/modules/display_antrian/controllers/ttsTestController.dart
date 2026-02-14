@@ -70,11 +70,11 @@ class TtsTestController extends GetxController {
     }
   }
 
-  Future<void> playTestSound() async {
+  Future<void> playTestSound(String textSpech) async {
     // if (!isEngineReady.value) return;
 
     await flutterTts.setLanguage('id-ID');
-    await flutterTts.setSpeechRate(0.8);
+    await flutterTts.setSpeechRate(0.9);
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.1);
 
@@ -100,6 +100,6 @@ class TtsTestController extends GetxController {
     }
 
     print("📣 Memulai Panggilan...");
-    await flutterTts.speak(textToSpeak);
+    await flutterTts.speak(textSpech);
   }
 }

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_randomforest_puskesmas_benda/modules/display_antrian/controllers/ttsTestController.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -149,6 +150,7 @@ class DisplayAntrianController extends GetxController {
 
       // 🔊 WANITA INDONESIA
       await _playQueueAnnouncement(nomor, poli);
+      await Future.delayed(const Duration(milliseconds: 7000));
 
       // await Future.delayed(const Duration(milliseconds: 5500));
       _hasPlayedAnnouncement[nomor] = false;
@@ -183,8 +185,11 @@ class DisplayAntrianController extends GetxController {
 
     final announcement =
         'Nomor antrian $formatted, silakan menuju ke $poliName';
+    
+    final controller = Get.put(TtsTestController());
+    await controller.playTestSound(announcement);
 
-    await _flutterTts.speak(announcement);
+    // await _flutterTts.speak(announcement);
   }
 
   // ===================== UTIL =====================
