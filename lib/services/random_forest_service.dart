@@ -199,6 +199,802 @@ class RandomForestService {
         return (weightedSum / totalWeight).round();
       },
     ),
+
+    // POHON 8: poli=2, antrian≤2, daftar<08:00
+    DecisionTree(
+      name: 'Pohon 8: poli=2, antrian≤2, daftar<08:00',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final jamDaftar = features['jamDaftar'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PG' && jumlahAntrian <= 2 && jamDaftar < 8) {
+          return 10;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 9: poli=1, antrian≤3, daftar<08:00
+    DecisionTree(
+      name: 'Pohon 9: poli=1, antrian≤3, daftar<08:00',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final jamDaftar = features['jamDaftar'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PU' && jumlahAntrian <= 3 && jamDaftar < 8) {
+          return 15;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 10: poli=3, antrian≤3, daftar<08:30
+    DecisionTree(
+      name: 'Pohon 10: poli=3, antrian≤3, daftar<08:30',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final jamDaftar = features['jamDaftar'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PK' && jumlahAntrian <= 3 && jamDaftar < 9) {
+          return 15;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 11: poli=4, antrian≤2, daftar<08:30
+    DecisionTree(
+      name: 'Pohon 11: poli=4, antrian≤2, daftar<08:30',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final jamDaftar = features['jamDaftar'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P4' && jumlahAntrian <= 2 && jamDaftar < 9) {
+          return 20;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 12: poli=5, antrian≤1, daftar<08:00
+    DecisionTree(
+      name: 'Pohon 12: poli=5, antrian≤1, daftar<08:00',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final jamDaftar = features['jamDaftar'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && jumlahAntrian <= 1 && jamDaftar < 8) {
+          return 20;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 13: poli=5, antrian=3, daftar<08:30
+    DecisionTree(
+      name: 'Pohon 13: poli=5, antrian=3, daftar<08:30',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final jamDaftar = features['jamDaftar'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && jumlahAntrian == 3 && jamDaftar < 9) {
+          return 45;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 14: poli=1, antrian=5, hari≠1
+    DecisionTree(
+      name: 'Pohon 14: poli=1, antrian=5, hari≠1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        if (kodePoli == 'PU' && jumlahAntrian == 5 && hariLower != 'senin') {
+          return 25;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 15: poli=2, antrian=4, hari≠1
+    DecisionTree(
+      name: 'Pohon 15: poli=2, antrian=4, hari≠1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        if (kodePoli == 'PG' && jumlahAntrian == 4 && hariLower != 'senin') {
+          return 15;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 16: poli=3, antrian=5, hari=1
+    DecisionTree(
+      name: 'Pohon 16: poli=3, antrian=5, hari=1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PK' && jumlahAntrian == 5 && hari.toLowerCase() == 'senin') {
+          return 30;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 17: poli=4, antrian=4, hari=1
+    DecisionTree(
+      name: 'Pohon 17: poli=4, antrian=4, hari=1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P4' && jumlahAntrian == 4 && hari.toLowerCase() == 'senin') {
+          return 35;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 18: poli=1, antrian=6
+    DecisionTree(
+      name: 'Pohon 18: poli=1, antrian=6',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PU' && jumlahAntrian == 6) {
+          return 30;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 19: poli=2, antrian=6
+    DecisionTree(
+      name: 'Pohon 19: poli=2, antrian=6',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PG' && jumlahAntrian == 6) {
+          return 18;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 20: poli=3, antrian=7
+    DecisionTree(
+      name: 'Pohon 20: poli=3, antrian=7',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PK' && jumlahAntrian == 7) {
+          return 35;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 21: poli=4, antrian=6
+    DecisionTree(
+      name: 'Pohon 21: poli=4, antrian=6',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P4' && jumlahAntrian == 6) {
+          return 42;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 22: poli=5, antrian=5
+    DecisionTree(
+      name: 'Pohon 22: poli=5, antrian=5',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && jumlahAntrian == 5) {
+          return 75;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 23: poli=5, antrian=8
+    DecisionTree(
+      name: 'Pohon 23: poli=5, antrian=8',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && jumlahAntrian == 8) {
+          return 120;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 24: poli=1, antrian=8, hari=1
+    DecisionTree(
+      name: 'Pohon 24: poli=1, antrian=8, hari=1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PU' && jumlahAntrian == 8 && hari.toLowerCase() == 'senin') {
+          return 50;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 25: poli=2, antrian=8, hari=1
+    DecisionTree(
+      name: 'Pohon 25: poli=2, antrian=8, hari=1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PG' && jumlahAntrian == 8 && hari.toLowerCase() == 'senin') {
+          return 30;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 26: poli=3, antrian=10
+    DecisionTree(
+      name: 'Pohon 26: poli=3, antrian=10',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PK' && jumlahAntrian == 10) {
+          return 50;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 27: poli=4, antrian=9
+    DecisionTree(
+      name: 'Pohon 27: poli=4, antrian=9',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P4' && jumlahAntrian == 9) {
+          return 63;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 28: poli=1, antrian=10
+    DecisionTree(
+      name: 'Pohon 28: poli=1, antrian=10',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PU' && jumlahAntrian == 10) {
+          return 50;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 29: poli=2, antrian=10
+    DecisionTree(
+      name: 'Pohon 29: poli=2, antrian=10',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PG' && jumlahAntrian == 10) {
+          return 30;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 30: poli=3, antrian=12
+    DecisionTree(
+      name: 'Pohon 30: poli=3, antrian=12',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PK' && jumlahAntrian == 12) {
+          return 60;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 31: poli=4, antrian=10
+    DecisionTree(
+      name: 'Pohon 31: poli=4, antrian=10',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P4' && jumlahAntrian == 10) {
+          return 70;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 32: poli=5, antrian=10
+    DecisionTree(
+      name: 'Pohon 32: poli=5, antrian=10',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && jumlahAntrian == 10) {
+          return 150;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 33: poli=5, antrian=12
+    DecisionTree(
+      name: 'Pohon 33: poli=5, antrian=12',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && jumlahAntrian == 12) {
+          return 180;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 34: poli=1, antrian=12, hari=1
+    DecisionTree(
+      name: 'Pohon 34: poli=1, antrian=12, hari=1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PU' && jumlahAntrian == 12 && hari.toLowerCase() == 'senin') {
+          return 70;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 35: poli=2, antrian=12, hari=1
+    DecisionTree(
+      name: 'Pohon 35: poli=2, antrian=12, hari=1',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final hari = features['hari'] as String;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PG' && jumlahAntrian == 12 && hari.toLowerCase() == 'senin') {
+          return 40;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 36: poli=3, antrian=15
+    DecisionTree(
+      name: 'Pohon 36: poli=3, antrian=15',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PK' && jumlahAntrian == 15) {
+          return 75;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 37: poli=4, antrian=14
+    DecisionTree(
+      name: 'Pohon 37: poli=4, antrian=14',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P4' && jumlahAntrian == 14) {
+          return 98;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 38: hari=1, poli=1, antrian=5
+    DecisionTree(
+      name: 'Pohon 38: hari=1, poli=1, antrian=5',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PU' && jumlahAntrian == 5) {
+          return 35;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 39: hari=1, poli=2, antrian=5
+    DecisionTree(
+      name: 'Pohon 39: hari=1, poli=2, antrian=5',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PG' && jumlahAntrian == 5) {
+          return 20;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 40: hari=1, poli=3, antrian=7
+    DecisionTree(
+      name: 'Pohon 40: hari=1, poli=3, antrian=7',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PK' && jumlahAntrian == 7) {
+          return 40;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 41: hari=1, poli=4, antrian=6
+    DecisionTree(
+      name: 'Pohon 41: hari=1, poli=4, antrian=6',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'P4' && jumlahAntrian == 6) {
+          return 50;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 42: hari=1, poli=5, antrian=6
+    DecisionTree(
+      name: 'Pohon 42: hari=1, poli=5, antrian=6',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'P5' && jumlahAntrian == 6) {
+          return 90;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 43: hari=2-4, poli=1, antrian=5
+    DecisionTree(
+      name: 'Pohon 43: hari=2-4, poli=1, antrian=5',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
+        if (hari234 && kodePoli == 'PU' && jumlahAntrian == 5) {
+          return 25;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 44: hari=2-4, poli=2, antrian=5
+    DecisionTree(
+      name: 'Pohon 44: hari=2-4, poli=2, antrian=5',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
+        if (hari234 && kodePoli == 'PG' && jumlahAntrian == 5) {
+          return 15;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 45: hari=2-4, poli=3, antrian=7
+    DecisionTree(
+      name: 'Pohon 45: hari=2-4, poli=3, antrian=7',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
+        if (hari234 && kodePoli == 'PK' && jumlahAntrian == 7) {
+          return 35;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 46: hari=2-4, poli=4, antrian=6
+    DecisionTree(
+      name: 'Pohon 46: hari=2-4, poli=4, antrian=6',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
+        if (hari234 && kodePoli == 'P4' && jumlahAntrian == 6) {
+          return 42;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 47: hari=2-4, poli=5, antrian=6
+    DecisionTree(
+      name: 'Pohon 47: hari=2-4, poli=5, antrian=6',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        final hariLower = hari.toLowerCase();
+        bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
+        if (hari234 && kodePoli == 'P5' && jumlahAntrian == 6) {
+          return 90;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 48: hari=5, poli=1, antrian=8
+    DecisionTree(
+      name: 'Pohon 48: hari=5, poli=1, antrian=8',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'jumat' && kodePoli == 'PU' && jumlahAntrian == 8) {
+          return 45;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 49: hari=5, poli=2, antrian=8
+    DecisionTree(
+      name: 'Pohon 49: hari=5, poli=2, antrian=8',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'jumat' && kodePoli == 'PG' && jumlahAntrian == 8) {
+          return 25;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 50: hari=5, poli=5, antrian=8
+    DecisionTree(
+      name: 'Pohon 50: hari=5, poli=5, antrian=8',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'jumat' && kodePoli == 'P5' && jumlahAntrian == 8) {
+          return 120;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 51: hari=6, poli=1, antrian=4
+    DecisionTree(
+      name: 'Pohon 51: hari=6, poli=1, antrian=4',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PU' && jumlahAntrian == 4) {
+          return 20;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 52: hari=6, poli=2, antrian=4
+    DecisionTree(
+      name: 'Pohon 52: hari=6, poli=2, antrian=4',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PG' && jumlahAntrian == 4) {
+          return 12;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 53: hari=6, poli=3, antrian=6
+    DecisionTree(
+      name: 'Pohon 53: hari=6, poli=3, antrian=6',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PK' && jumlahAntrian == 6) {
+          return 30;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 54: hari=6, poli=4, antrian=6
+    DecisionTree(
+      name: 'Pohon 54: hari=6, poli=4, antrian=6',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'P4' && jumlahAntrian == 6) {
+          return 42;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 55: hari=6, poli=5, antrian=5
+    DecisionTree(
+      name: 'Pohon 55: hari=6, poli=5, antrian=5',
+      predict: (features) {
+        final hari = features['hari'] as String;
+        final kodePoli = features['kodePoli'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'P5' && jumlahAntrian == 5) {
+          return 75;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 56: poli=2, daftar<08:00, antrian≤3
+    DecisionTree(
+      name: 'Pohon 56: poli=2, daftar<08:00, antrian≤3',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final jamDaftar = features['jamDaftar'] as int;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'PG' && jamDaftar < 8 && jumlahAntrian <= 3) {
+          return 12;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
+
+    // POHON 57: poli=5, hari=1, antrian≥8
+    DecisionTree(
+      name: 'Pohon 57: poli=5, hari=1, antrian≥8',
+      predict: (features) {
+        final kodePoli = features['kodePoli'] as String;
+        final hari = features['hari'] as String;
+        final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
+        final rataRata = features['rataRataWaktuPelayanan'] as int;
+
+        if (kodePoli == 'P5' && hari.toLowerCase() == 'senin' && jumlahAntrian >= 8) {
+          return 130;
+        }
+        return jumlahAntrian * rataRata;
+      },
+    ),
   ];
   // ============================================================
   // AKHIR DEFINISI POHON - TAMBAH POHON BARU DI ATAS BARIS INI
