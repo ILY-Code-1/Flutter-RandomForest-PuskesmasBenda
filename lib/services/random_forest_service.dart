@@ -16,7 +16,7 @@ class RandomForestService {
   static final List<DecisionTree> _trees = [
     // POHON 1: Berdasarkan Jumlah Antrian Sebelumnya
     DecisionTree(
-      name: 'Pohon 1: Jumlah Antrian',
+      name: 'Pohon Logika 1 (antrian=0=0, antrian<=3=rata2, antrian<=6=rata2x1.1, antrian<=10=rata2x1.15, antrian>10=rata2x1.2)',
       predict: (features) {
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
@@ -31,7 +31,7 @@ class RandomForestService {
 
     // POHON 2: Berdasarkan Hari
     DecisionTree(
-      name: 'Pohon 2: Faktor Hari',
+      name: 'Pohon Logika 2 (hari: Seninx1.3, Sel/Rabx1.1, Kamx1.0, Jumx0.95, Sabx1.2)',
       predict: (features) {
         final hari = features['hari'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -42,8 +42,7 @@ class RandomForestService {
           case 'senin':
             faktorHari = 1.3; // Senin biasanya ramai
             break;
-          case 'selasa':
-          case 'rabu':
+          case 'selasa' || 'rabu':
             faktorHari = 1.1;
             break;
           case 'kamis':
@@ -65,7 +64,7 @@ class RandomForestService {
 
     // POHON 3: Berdasarkan Jam Daftar
     DecisionTree(
-      name: 'Pohon 3: Jam Daftar',
+      name: 'Pohon Logika 3 (jam: 8-10x1.2, 10-12x1.0, 12-14x0.85, lainx0.9)',
       predict: (features) {
         final jamDaftar = features['jamDaftar'] as int;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -88,7 +87,7 @@ class RandomForestService {
 
     // POHON 4: Berdasarkan Tipe Poli
     DecisionTree(
-      name: 'Pohon 4: Tipe Poli',
+      name: 'Pohon Logika 4 (poli: PUx1.0, PGx1.15, PKx1.1)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -113,7 +112,7 @@ class RandomForestService {
 
     // POHON 5: Berdasarkan Rata-rata Historis
     DecisionTree(
-      name: 'Pohon 5: Data Historis',
+      name: 'Pohon Logika 5 (rata-rata histori dgn kondisi poli & antrian serupa)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -143,7 +142,7 @@ class RandomForestService {
 
     // POHON 6: Kombinasi Jumlah & Hari
     DecisionTree(
-      name: 'Pohon 6: Kombinasi Antrian-Hari',
+      name: 'Pohon Logika 6 (Senin/Sabtu & antrian>5x1.25, Senin/Sabtux1.15, antrian>5x1.1)',
       predict: (features) {
         final hari = features['hari'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -164,7 +163,7 @@ class RandomForestService {
 
     // POHON 7: Weighted Average dari Historis Terbaru
     DecisionTree(
-      name: 'Pohon 7: Weighted Historis Terbaru',
+      name: 'Pohon Logika 7 (rata-rata terbobot 10 data historis terbaru)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -202,14 +201,14 @@ class RandomForestService {
 
     // POHON 8: poli=2, antrian≤2, daftar<08:00
     DecisionTree(
-      name: 'Pohon 8: poli=2, antrian≤2, daftar<08:00',
+      name: 'Pohon Logika 8 (PK + antrian<=2 + daftar<08:00 = 10 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final jamDaftar = features['jamDaftar'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PG' && jumlahAntrian <= 2 && jamDaftar < 8) {
+        if (kodePoli == 'PK' && jumlahAntrian <= 2 && jamDaftar < 8) {
           return 10;
         }
         return jumlahAntrian * rataRata;
@@ -218,7 +217,7 @@ class RandomForestService {
 
     // POHON 9: poli=1, antrian≤3, daftar<08:00
     DecisionTree(
-      name: 'Pohon 9: poli=1, antrian≤3, daftar<08:00',
+      name: 'Pohon Logika 9 (PU + antrian<=3 + daftar<08:00 = 15 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -234,14 +233,14 @@ class RandomForestService {
 
     // POHON 10: poli=3, antrian≤3, daftar<08:30
     DecisionTree(
-      name: 'Pohon 10: poli=3, antrian≤3, daftar<08:30',
+      name: 'Pohon Logika 10 (PA + antrian<=3 + daftar<08:30 = 15 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final jamDaftar = features['jamDaftar'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PK' && jumlahAntrian <= 3 && jamDaftar < 9) {
+        if (kodePoli == 'PA' && jumlahAntrian <= 3 && jamDaftar < 9) {
           return 15;
         }
         return jumlahAntrian * rataRata;
@@ -250,14 +249,14 @@ class RandomForestService {
 
     // POHON 11: poli=4, antrian≤2, daftar<08:30
     DecisionTree(
-      name: 'Pohon 11: poli=4, antrian≤2, daftar<08:30',
+      name: 'Pohon Logika 11 (PL + antrian<=2 + daftar<08:30 = 20 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final jamDaftar = features['jamDaftar'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P4' && jumlahAntrian <= 2 && jamDaftar < 9) {
+        if (kodePoli == 'PL' && jumlahAntrian <= 2 && jamDaftar < 9) {
           return 20;
         }
         return jumlahAntrian * rataRata;
@@ -266,14 +265,14 @@ class RandomForestService {
 
     // POHON 12: poli=5, antrian≤1, daftar<08:00
     DecisionTree(
-      name: 'Pohon 12: poli=5, antrian≤1, daftar<08:00',
+      name: 'Pohon Logika 12 (PG + antrian<=1 + daftar<08:00 = 20 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final jamDaftar = features['jamDaftar'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && jumlahAntrian <= 1 && jamDaftar < 8) {
+        if (kodePoli == 'PG' && jumlahAntrian <= 1 && jamDaftar < 8) {
           return 20;
         }
         return jumlahAntrian * rataRata;
@@ -282,14 +281,14 @@ class RandomForestService {
 
     // POHON 13: poli=5, antrian=3, daftar<08:30
     DecisionTree(
-      name: 'Pohon 13: poli=5, antrian=3, daftar<08:30',
+      name: 'Pohon Logika 13 (PG + antrian=3 + daftar<08:30 = 45 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final jamDaftar = features['jamDaftar'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && jumlahAntrian == 3 && jamDaftar < 9) {
+        if (kodePoli == 'PG' && jumlahAntrian == 3 && jamDaftar < 9) {
           return 45;
         }
         return jumlahAntrian * rataRata;
@@ -298,7 +297,7 @@ class RandomForestService {
 
     // POHON 14: poli=1, antrian=5, hari≠1
     DecisionTree(
-      name: 'Pohon 14: poli=1, antrian=5, hari≠1',
+      name: 'Pohon Logika 14 (PU + antrian=5 + bukan Senin = 25 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -315,7 +314,7 @@ class RandomForestService {
 
     // POHON 15: poli=2, antrian=4, hari≠1
     DecisionTree(
-      name: 'Pohon 15: poli=2, antrian=4, hari≠1',
+      name: 'Pohon Logika 15 (PK + antrian=4 + bukan Senin = 15 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -323,7 +322,7 @@ class RandomForestService {
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
         final hariLower = hari.toLowerCase();
-        if (kodePoli == 'PG' && jumlahAntrian == 4 && hariLower != 'senin') {
+        if (kodePoli == 'PK' && jumlahAntrian == 4 && hariLower != 'senin') {
           return 15;
         }
         return jumlahAntrian * rataRata;
@@ -332,14 +331,14 @@ class RandomForestService {
 
     // POHON 16: poli=3, antrian=5, hari=1
     DecisionTree(
-      name: 'Pohon 16: poli=3, antrian=5, hari=1',
+      name: 'Pohon Logika 16 (PA + antrian=5 + Senin = 30 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final hari = features['hari'] as String;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PK' && jumlahAntrian == 5 && hari.toLowerCase() == 'senin') {
+        if (kodePoli == 'PA' && jumlahAntrian == 5 && hari.toLowerCase() == 'senin') {
           return 30;
         }
         return jumlahAntrian * rataRata;
@@ -348,14 +347,14 @@ class RandomForestService {
 
     // POHON 17: poli=4, antrian=4, hari=1
     DecisionTree(
-      name: 'Pohon 17: poli=4, antrian=4, hari=1',
+      name: 'Pohon Logika 17 (PL + antrian=4 + Senin = 35 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final hari = features['hari'] as String;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P4' && jumlahAntrian == 4 && hari.toLowerCase() == 'senin') {
+        if (kodePoli == 'PL' && jumlahAntrian == 4 && hari.toLowerCase() == 'senin') {
           return 35;
         }
         return jumlahAntrian * rataRata;
@@ -364,7 +363,7 @@ class RandomForestService {
 
     // POHON 18: poli=1, antrian=6
     DecisionTree(
-      name: 'Pohon 18: poli=1, antrian=6',
+      name: 'Pohon Logika 18 (PU + antrian=6 = 30 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -379,13 +378,13 @@ class RandomForestService {
 
     // POHON 19: poli=2, antrian=6
     DecisionTree(
-      name: 'Pohon 19: poli=2, antrian=6',
+      name: 'Pohon Logika 19 (PK + antrian=6 = 18 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PG' && jumlahAntrian == 6) {
+        if (kodePoli == 'PK' && jumlahAntrian == 6) {
           return 18;
         }
         return jumlahAntrian * rataRata;
@@ -394,13 +393,13 @@ class RandomForestService {
 
     // POHON 20: poli=3, antrian=7
     DecisionTree(
-      name: 'Pohon 20: poli=3, antrian=7',
+      name: 'Pohon Logika 20 (PA + antrian=7 = 35 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PK' && jumlahAntrian == 7) {
+        if (kodePoli == 'PA' && jumlahAntrian == 7) {
           return 35;
         }
         return jumlahAntrian * rataRata;
@@ -409,13 +408,13 @@ class RandomForestService {
 
     // POHON 21: poli=4, antrian=6
     DecisionTree(
-      name: 'Pohon 21: poli=4, antrian=6',
+      name: 'Pohon Logika 21 (PL + antrian=6 = 42 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P4' && jumlahAntrian == 6) {
+        if (kodePoli == 'PL' && jumlahAntrian == 6) {
           return 42;
         }
         return jumlahAntrian * rataRata;
@@ -424,13 +423,13 @@ class RandomForestService {
 
     // POHON 22: poli=5, antrian=5
     DecisionTree(
-      name: 'Pohon 22: poli=5, antrian=5',
+      name: 'Pohon Logika 22 (PG + antrian=5 = 75 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && jumlahAntrian == 5) {
+        if (kodePoli == 'PG' && jumlahAntrian == 5) {
           return 75;
         }
         return jumlahAntrian * rataRata;
@@ -439,13 +438,13 @@ class RandomForestService {
 
     // POHON 23: poli=5, antrian=8
     DecisionTree(
-      name: 'Pohon 23: poli=5, antrian=8',
+      name: 'Pohon Logika 23 (PG + antrian=8 = 120 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && jumlahAntrian == 8) {
+        if (kodePoli == 'PG' && jumlahAntrian == 8) {
           return 120;
         }
         return jumlahAntrian * rataRata;
@@ -454,7 +453,7 @@ class RandomForestService {
 
     // POHON 24: poli=1, antrian=8, hari=1
     DecisionTree(
-      name: 'Pohon 24: poli=1, antrian=8, hari=1',
+      name: 'Pohon Logika 24 (PU + antrian=8 + Senin = 50 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -470,14 +469,14 @@ class RandomForestService {
 
     // POHON 25: poli=2, antrian=8, hari=1
     DecisionTree(
-      name: 'Pohon 25: poli=2, antrian=8, hari=1',
+      name: 'Pohon Logika 25 (PK + antrian=8 + Senin = 30 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final hari = features['hari'] as String;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PG' && jumlahAntrian == 8 && hari.toLowerCase() == 'senin') {
+        if (kodePoli == 'PK' && jumlahAntrian == 8 && hari.toLowerCase() == 'senin') {
           return 30;
         }
         return jumlahAntrian * rataRata;
@@ -486,13 +485,13 @@ class RandomForestService {
 
     // POHON 26: poli=3, antrian=10
     DecisionTree(
-      name: 'Pohon 26: poli=3, antrian=10',
+      name: 'Pohon Logika 26 (PA + antrian=10 = 50 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PK' && jumlahAntrian == 10) {
+        if (kodePoli == 'PA' && jumlahAntrian == 10) {
           return 50;
         }
         return jumlahAntrian * rataRata;
@@ -501,13 +500,13 @@ class RandomForestService {
 
     // POHON 27: poli=4, antrian=9
     DecisionTree(
-      name: 'Pohon 27: poli=4, antrian=9',
+      name: 'Pohon Logika 27 (PL + antrian=9 = 63 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P4' && jumlahAntrian == 9) {
+        if (kodePoli == 'PL' && jumlahAntrian == 9) {
           return 63;
         }
         return jumlahAntrian * rataRata;
@@ -516,7 +515,7 @@ class RandomForestService {
 
     // POHON 28: poli=1, antrian=10
     DecisionTree(
-      name: 'Pohon 28: poli=1, antrian=10',
+      name: 'Pohon Logika 28 (PU + antrian=10 = 50 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -531,13 +530,13 @@ class RandomForestService {
 
     // POHON 29: poli=2, antrian=10
     DecisionTree(
-      name: 'Pohon 29: poli=2, antrian=10',
+      name: 'Pohon Logika 29 (PK + antrian=10 = 30 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PG' && jumlahAntrian == 10) {
+        if (kodePoli == 'PK' && jumlahAntrian == 10) {
           return 30;
         }
         return jumlahAntrian * rataRata;
@@ -546,13 +545,13 @@ class RandomForestService {
 
     // POHON 30: poli=3, antrian=12
     DecisionTree(
-      name: 'Pohon 30: poli=3, antrian=12',
+      name: 'Pohon Logika 30 (PA + antrian=12 = 60 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PK' && jumlahAntrian == 12) {
+        if (kodePoli == 'PA' && jumlahAntrian == 12) {
           return 60;
         }
         return jumlahAntrian * rataRata;
@@ -561,13 +560,13 @@ class RandomForestService {
 
     // POHON 31: poli=4, antrian=10
     DecisionTree(
-      name: 'Pohon 31: poli=4, antrian=10',
+      name: 'Pohon Logika 31 (PL + antrian=10 = 70 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P4' && jumlahAntrian == 10) {
+        if (kodePoli == 'PL' && jumlahAntrian == 10) {
           return 70;
         }
         return jumlahAntrian * rataRata;
@@ -576,13 +575,13 @@ class RandomForestService {
 
     // POHON 32: poli=5, antrian=10
     DecisionTree(
-      name: 'Pohon 32: poli=5, antrian=10',
+      name: 'Pohon Logika 32 (PG + antrian=10 = 150 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && jumlahAntrian == 10) {
+        if (kodePoli == 'PG' && jumlahAntrian == 10) {
           return 150;
         }
         return jumlahAntrian * rataRata;
@@ -591,13 +590,13 @@ class RandomForestService {
 
     // POHON 33: poli=5, antrian=12
     DecisionTree(
-      name: 'Pohon 33: poli=5, antrian=12',
+      name: 'Pohon Logika 33 (PG + antrian=12 = 180 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && jumlahAntrian == 12) {
+        if (kodePoli == 'PG' && jumlahAntrian == 12) {
           return 180;
         }
         return jumlahAntrian * rataRata;
@@ -606,7 +605,7 @@ class RandomForestService {
 
     // POHON 34: poli=1, antrian=12, hari=1
     DecisionTree(
-      name: 'Pohon 34: poli=1, antrian=12, hari=1',
+      name: 'Pohon Logika 34 (PU + antrian=12 + Senin = 70 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
@@ -622,14 +621,14 @@ class RandomForestService {
 
     // POHON 35: poli=2, antrian=12, hari=1
     DecisionTree(
-      name: 'Pohon 35: poli=2, antrian=12, hari=1',
+      name: 'Pohon Logika 35 (PK + antrian=12 + Senin = 40 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final hari = features['hari'] as String;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PG' && jumlahAntrian == 12 && hari.toLowerCase() == 'senin') {
+        if (kodePoli == 'PK' && jumlahAntrian == 12 && hari.toLowerCase() == 'senin') {
           return 40;
         }
         return jumlahAntrian * rataRata;
@@ -638,13 +637,13 @@ class RandomForestService {
 
     // POHON 36: poli=3, antrian=15
     DecisionTree(
-      name: 'Pohon 36: poli=3, antrian=15',
+      name: 'Pohon Logika 36 (PA + antrian=15 = 75 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PK' && jumlahAntrian == 15) {
+        if (kodePoli == 'PA' && jumlahAntrian == 15) {
           return 75;
         }
         return jumlahAntrian * rataRata;
@@ -653,13 +652,13 @@ class RandomForestService {
 
     // POHON 37: poli=4, antrian=14
     DecisionTree(
-      name: 'Pohon 37: poli=4, antrian=14',
+      name: 'Pohon Logika 37 (PL + antrian=14 = 98 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P4' && jumlahAntrian == 14) {
+        if (kodePoli == 'PL' && jumlahAntrian == 14) {
           return 98;
         }
         return jumlahAntrian * rataRata;
@@ -668,7 +667,7 @@ class RandomForestService {
 
     // POHON 38: hari=1, poli=1, antrian=5
     DecisionTree(
-      name: 'Pohon 38: hari=1, poli=1, antrian=5',
+      name: 'Pohon Logika 38 (Senin + PU + antrian=5 = 35 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -684,14 +683,14 @@ class RandomForestService {
 
     // POHON 39: hari=1, poli=2, antrian=5
     DecisionTree(
-      name: 'Pohon 39: hari=1, poli=2, antrian=5',
+      name: 'Pohon Logika 39 (Senin + PK + antrian=5 = 20 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'senin' && kodePoli == 'PG' && jumlahAntrian == 5) {
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PK' && jumlahAntrian == 5) {
           return 20;
         }
         return jumlahAntrian * rataRata;
@@ -700,14 +699,14 @@ class RandomForestService {
 
     // POHON 40: hari=1, poli=3, antrian=7
     DecisionTree(
-      name: 'Pohon 40: hari=1, poli=3, antrian=7',
+      name: 'Pohon Logika 40 (Senin + PA + antrian=7 = 40 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'senin' && kodePoli == 'PK' && jumlahAntrian == 7) {
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PA' && jumlahAntrian == 7) {
           return 40;
         }
         return jumlahAntrian * rataRata;
@@ -716,14 +715,14 @@ class RandomForestService {
 
     // POHON 41: hari=1, poli=4, antrian=6
     DecisionTree(
-      name: 'Pohon 41: hari=1, poli=4, antrian=6',
+      name: 'Pohon Logika 41 (Senin + PL + antrian=6 = 50 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'senin' && kodePoli == 'P4' && jumlahAntrian == 6) {
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PL' && jumlahAntrian == 6) {
           return 50;
         }
         return jumlahAntrian * rataRata;
@@ -732,14 +731,14 @@ class RandomForestService {
 
     // POHON 42: hari=1, poli=5, antrian=6
     DecisionTree(
-      name: 'Pohon 42: hari=1, poli=5, antrian=6',
+      name: 'Pohon Logika 42 (Senin + PG + antrian=6 = 90 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'senin' && kodePoli == 'P5' && jumlahAntrian == 6) {
+        if (hari.toLowerCase() == 'senin' && kodePoli == 'PG' && jumlahAntrian == 6) {
           return 90;
         }
         return jumlahAntrian * rataRata;
@@ -748,7 +747,7 @@ class RandomForestService {
 
     // POHON 43: hari=2-4, poli=1, antrian=5
     DecisionTree(
-      name: 'Pohon 43: hari=2-4, poli=1, antrian=5',
+      name: 'Pohon Logika 43 (Sel-Kam + PU + antrian=5 = 25 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -766,7 +765,7 @@ class RandomForestService {
 
     // POHON 44: hari=2-4, poli=2, antrian=5
     DecisionTree(
-      name: 'Pohon 44: hari=2-4, poli=2, antrian=5',
+      name: 'Pohon Logika 44 (Sel-Kam + PK + antrian=5 = 15 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -775,7 +774,7 @@ class RandomForestService {
 
         final hariLower = hari.toLowerCase();
         bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
-        if (hari234 && kodePoli == 'PG' && jumlahAntrian == 5) {
+        if (hari234 && kodePoli == 'PK' && jumlahAntrian == 5) {
           return 15;
         }
         return jumlahAntrian * rataRata;
@@ -784,7 +783,7 @@ class RandomForestService {
 
     // POHON 45: hari=2-4, poli=3, antrian=7
     DecisionTree(
-      name: 'Pohon 45: hari=2-4, poli=3, antrian=7',
+      name: 'Pohon Logika 45 (Sel-Kam + PA + antrian=7 = 35 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -793,7 +792,7 @@ class RandomForestService {
 
         final hariLower = hari.toLowerCase();
         bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
-        if (hari234 && kodePoli == 'PK' && jumlahAntrian == 7) {
+        if (hari234 && kodePoli == 'PA' && jumlahAntrian == 7) {
           return 35;
         }
         return jumlahAntrian * rataRata;
@@ -802,7 +801,7 @@ class RandomForestService {
 
     // POHON 46: hari=2-4, poli=4, antrian=6
     DecisionTree(
-      name: 'Pohon 46: hari=2-4, poli=4, antrian=6',
+      name: 'Pohon Logika 46 (Sel-Kam + PL + antrian=6 = 42 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -811,7 +810,7 @@ class RandomForestService {
 
         final hariLower = hari.toLowerCase();
         bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
-        if (hari234 && kodePoli == 'P4' && jumlahAntrian == 6) {
+        if (hari234 && kodePoli == 'PL' && jumlahAntrian == 6) {
           return 42;
         }
         return jumlahAntrian * rataRata;
@@ -820,7 +819,7 @@ class RandomForestService {
 
     // POHON 47: hari=2-4, poli=5, antrian=6
     DecisionTree(
-      name: 'Pohon 47: hari=2-4, poli=5, antrian=6',
+      name: 'Pohon Logika 47 (Sel-Kam + PG + antrian=6 = 90 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -829,7 +828,7 @@ class RandomForestService {
 
         final hariLower = hari.toLowerCase();
         bool hari234 = hariLower == 'selasa' || hariLower == 'rabu' || hariLower == 'kamis';
-        if (hari234 && kodePoli == 'P5' && jumlahAntrian == 6) {
+        if (hari234 && kodePoli == 'PG' && jumlahAntrian == 6) {
           return 90;
         }
         return jumlahAntrian * rataRata;
@@ -838,7 +837,7 @@ class RandomForestService {
 
     // POHON 48: hari=5, poli=1, antrian=8
     DecisionTree(
-      name: 'Pohon 48: hari=5, poli=1, antrian=8',
+      name: 'Pohon Logika 48 (Jumat + PU + antrian=8 = 45 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -854,14 +853,14 @@ class RandomForestService {
 
     // POHON 49: hari=5, poli=2, antrian=8
     DecisionTree(
-      name: 'Pohon 49: hari=5, poli=2, antrian=8',
+      name: 'Pohon Logika 49 (Jumat + PK + antrian=8 = 25 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'jumat' && kodePoli == 'PG' && jumlahAntrian == 8) {
+        if (hari.toLowerCase() == 'jumat' && kodePoli == 'PK' && jumlahAntrian == 8) {
           return 25;
         }
         return jumlahAntrian * rataRata;
@@ -870,14 +869,14 @@ class RandomForestService {
 
     // POHON 50: hari=5, poli=5, antrian=8
     DecisionTree(
-      name: 'Pohon 50: hari=5, poli=5, antrian=8',
+      name: 'Pohon Logika 50 (Jumat + PG + antrian=8 = 120 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'jumat' && kodePoli == 'P5' && jumlahAntrian == 8) {
+        if (hari.toLowerCase() == 'jumat' && kodePoli == 'PG' && jumlahAntrian == 8) {
           return 120;
         }
         return jumlahAntrian * rataRata;
@@ -886,7 +885,7 @@ class RandomForestService {
 
     // POHON 51: hari=6, poli=1, antrian=4
     DecisionTree(
-      name: 'Pohon 51: hari=6, poli=1, antrian=4',
+      name: 'Pohon Logika 51 (Sabtu + PU + antrian=4 = 20 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
@@ -902,14 +901,14 @@ class RandomForestService {
 
     // POHON 52: hari=6, poli=2, antrian=4
     DecisionTree(
-      name: 'Pohon 52: hari=6, poli=2, antrian=4',
+      name: 'Pohon Logika 52 (Sabtu + PK + antrian=4 = 12 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PG' && jumlahAntrian == 4) {
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PK' && jumlahAntrian == 4) {
           return 12;
         }
         return jumlahAntrian * rataRata;
@@ -918,14 +917,14 @@ class RandomForestService {
 
     // POHON 53: hari=6, poli=3, antrian=6
     DecisionTree(
-      name: 'Pohon 53: hari=6, poli=3, antrian=6',
+      name: 'Pohon Logika 53 (Sabtu + PA + antrian=6 = 30 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PK' && jumlahAntrian == 6) {
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PA' && jumlahAntrian == 6) {
           return 30;
         }
         return jumlahAntrian * rataRata;
@@ -934,14 +933,14 @@ class RandomForestService {
 
     // POHON 54: hari=6, poli=4, antrian=6
     DecisionTree(
-      name: 'Pohon 54: hari=6, poli=4, antrian=6',
+      name: 'Pohon Logika 54 (Sabtu + PL + antrian=6 = 42 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'P4' && jumlahAntrian == 6) {
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PL' && jumlahAntrian == 6) {
           return 42;
         }
         return jumlahAntrian * rataRata;
@@ -950,14 +949,14 @@ class RandomForestService {
 
     // POHON 55: hari=6, poli=5, antrian=5
     DecisionTree(
-      name: 'Pohon 55: hari=6, poli=5, antrian=5',
+      name: 'Pohon Logika 55 (Sabtu + PG + antrian=5 = 75 menit)',
       predict: (features) {
         final hari = features['hari'] as String;
         final kodePoli = features['kodePoli'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'P5' && jumlahAntrian == 5) {
+        if (hari.toLowerCase() == 'sabtu' && kodePoli == 'PG' && jumlahAntrian == 5) {
           return 75;
         }
         return jumlahAntrian * rataRata;
@@ -966,14 +965,14 @@ class RandomForestService {
 
     // POHON 56: poli=2, daftar<08:00, antrian≤3
     DecisionTree(
-      name: 'Pohon 56: poli=2, daftar<08:00, antrian≤3',
+      name: 'Pohon Logika 56 (PK + daftar<08:00 + antrian<=3 = 12 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final jamDaftar = features['jamDaftar'] as int;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'PG' && jamDaftar < 8 && jumlahAntrian <= 3) {
+        if (kodePoli == 'PK' && jamDaftar < 8 && jumlahAntrian <= 3) {
           return 12;
         }
         return jumlahAntrian * rataRata;
@@ -982,14 +981,14 @@ class RandomForestService {
 
     // POHON 57: poli=5, hari=1, antrian≥8
     DecisionTree(
-      name: 'Pohon 57: poli=5, hari=1, antrian≥8',
+      name: 'Pohon Logika 57 (PG + Senin + antrian>=8 = 130 menit)',
       predict: (features) {
         final kodePoli = features['kodePoli'] as String;
         final hari = features['hari'] as String;
         final jumlahAntrian = features['jumlahAntrianSebelum'] as int;
         final rataRata = features['rataRataWaktuPelayanan'] as int;
 
-        if (kodePoli == 'P5' && hari.toLowerCase() == 'senin' && jumlahAntrian >= 8) {
+        if (kodePoli == 'PG' && hari.toLowerCase() == 'senin' && jumlahAntrian >= 8) {
           return 130;
         }
         return jumlahAntrian * rataRata;
